@@ -21,6 +21,7 @@ Source0:	http://dl.sourceforge.net/sourceforge/atmelwlandriver/atmelwlandriver-%
 Source1:	atmelwlandriver.config
 # Patch0:		atmelwlandriver-makefile.patch
 Patch1:		atmelwlandriver-etc.patch
+Patch2:		atmelwlandriver-fpmath.patch
 URL:		http://atmelwlandriver.sourceforge.net
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
@@ -90,6 +91,7 @@ pracy.
 %setup -q -n atmelwlandriver
 #patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 cp -f Makefile{.kernelv2.6,}

@@ -10,18 +10,18 @@
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
-Version:	3.3.5.6
+Version:	3.4.0.1
 %define		_rel	3
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/atmelwlandriver/%{name}-%{version}.tar.bz2
-# Source0-md5:	dd9a11d175ba0fbb62cf7fec5426f5de
+# Source0-md5:	047152ce2619b6de049c01afd0417eef
 Source1:	%{name}-vnetrc
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-etc.patch
-Patch2:		%{name}-fpmath.patch
-Patch3:		%{name}-delay.patch
+#Patch2:		%{name}-fpmath.patch
+#Patch3:		%{name}-delay.patch
 Patch4:		%{name}-usb_defctrl.patch
 Patch5:		%{name}-winter-makefile.patch
 Patch6:		%{name}-fucd-makefile.patch
@@ -146,8 +146,8 @@ kart ATMELa.
 %setup -q -n atmelwlandriver
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#patch2 -p1
+#patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1

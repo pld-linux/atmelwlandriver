@@ -6,14 +6,12 @@
 %bcond_without	userspace	# don't build userspace applications
 %bcond_with	verbose		# verbose build (V=1)
 #
-# TODO:
-#		- src/apps/fw-upgrade/fucd
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.3.5.6
-%define		_rel	2
+%define		_rel	3
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -26,6 +24,7 @@ Patch2:		%{name}-fpmath.patch
 Patch3:		%{name}-delay.patch
 Patch4:		%{name}-usb_defctrl.patch
 Patch5:		%{name}-winter-makefile.patch
+Patch6:		%{name}-fucd-makefile.patch
 URL:		http://atmelwlandriver.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
@@ -129,6 +128,20 @@ podobna do tej jak± ma lvnet, dodatkowo rozszerzon± o bardzo przydatne
 funkcje takie jak: profile, lokalizacje i wsparcie dla wiêcej ni¿
 jednego urz±dzenia.
 
+%package fucd
+Summary:	Firmware upgrade tool for ATMEL Wireless Cards
+Summary(pl):	Narzêdzie aktualizacji bezprzewodowych kart ATMEL
+Release:	%{_rel}
+Group:		Networking/Utilities
+Requires:	kernel-net(atmelwlandriver) = %{version}
+
+%description fucd
+Graphical firmware upgrade tool for ATMEL Wireless Cards.
+
+%description fucd -l pl
+Narzêdzie do aktualizacji wewnêtrznego oprogramowania bezprzewodowych
+kart ATMELa.
+
 %prep
 %setup -q -n atmelwlandriver
 %patch0 -p1
@@ -137,6 +150,7 @@ jednego urz±dzenia.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 ln -sf Makefile.kernelv2.6 Makefile
@@ -181,6 +195,9 @@ done
 %{__make} -C src/apps/fw-upgrade atmelup \
 	CCC=%{__cc} \
 	CCFLAGS="%{rpmcflags}"
+
+%{__make} -C src/apps/fw-upgrade fucd \
+	OPT="%{rpmcflags}"
 %endif
 
 %install
@@ -213,6 +230,7 @@ install man/lvnet.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install src/apps/fw-upgrade/atmelup $RPM_BUILD_ROOT%{_sbindir}
 install src/apps/cmd_line/lvnet $RPM_BUILD_ROOT%{_sbindir}
 install objs/winter $RPM_BUILD_ROOT%{_sbindir}
+install src/apps/fw-upgrade/fucd $RPM_BUILD_ROOT%{_sbindir}
 %endif
 
 %clean
@@ -281,4 +299,8 @@ done
 %defattr(644,root,root,755)
 %doc src/apps/winter/README.linux
 %attr(755,root,root) %{_sbindir}/winter
+
+%files fucd
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/fucd
 %endif

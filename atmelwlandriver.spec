@@ -91,24 +91,43 @@ Sterownik dla Linuksa SMP do kart sieci bezprzewodowych opartych o
 uk³ady ATMELA AT76C5XXx.
 
 %package tools
-Summary:	Tools for monitoring ATMEL Wireless Card
-Summary(pl):	Narzêdzia do monitorowania bezprzewodowych kart ATMEL
+Summary:	Command line tools for managing ATMEL Wireless Card
+Summary(pl):	Narzêdzia lini poleceñ do obs³ugi bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
 
 %description tools
-Monitoring tools for the ATMEL Wireless Card adapters. When the pcmcia
+Managing tools for the ATMEL Wireless Card adapters. When the pcmcia
 module pcmf502*, the pci module pcifvnet, or the usb module usbvnet*
-is loaded the lvnet, xvnet, winter application can monitor the
-device's statistics or change it's runtime parameters.
+is loaded the lvnet application can monitor the device's statistics or
+change it's runtime parameters.
 
 %description tools -l pl
-Narzêdzia monitourj±ce dla adapterów kart sieci bezprzewodowych ATMEL.
+Narzêdzia do obs³ugi dla adapterów kart sieci bezprzewodowych ATMEL.
 Kiedy modu³ pcmcia pcmf502*, modu³ pci pcifvnet, albo modu³ usb
-usbvnet* jest za³adowany to aplikacja lvnet, xvnet, winter mo¿e
-monitorowaæ dane statystyczne urz±dzenia albo zmieniæ parametry jego
-pracy.
+usbvnet* jest za³adowany to aplikacja lvnet mo¿e monitorowaæ dane
+statystyczne urz±dzenia albo zmieniæ parametry jego pracy.
+
+%package winter
+Summary:	Graphical tool for monitoring ATMEL Wireless Cards
+Summary(pl):	Graficzne narzêdzie do monitorowania bezprzewodowych kart ATMEL
+Release:	%{_rel}
+Group:		Networking/Utilities
+Requires:	kernel-net(atmelwlandriver) = %{version}
+
+%description winter
+Winter is an X application, that provides a visual enviroment to
+configure and manage ATMEL cards. It's functionality is similar to
+that of lvnet, extended by very useful features such as profiles,
+localization and support for more than one devices alternatively.
+
+%description winter -l pl
+Winter jest aplikacj± dla X, która dostarcza wizualne ¶rodowisko
+pozwalaj±ce na konfiguracjê kart ATMELa. Jego funkcjonalno¶æ jest
+podobna do tej jak± ma lvnet, dodatkowo rozszerzon± o bardzo przydatne
+funkcje takie jak: profile, lokalizacje i wsparcie dla wiêcej ni¿
+jednego urz±dzenia.
 
 %prep
 %setup -q -n atmelwlandriver
@@ -256,6 +275,10 @@ done
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/atmelup
 %attr(755,root,root) %{_sbindir}/lvnet
-%attr(755,root,root) %{_sbindir}/winter
 %{_mandir}/man1/*
+
+%files winter
+%defattr(644,root,root,755)
+%doc src/apps/winter/README.linux
+%attr(755,root,root) %{_sbindir}/winter
 %endif

@@ -1,0 +1,60 @@
+# Startup options file currently only for the ATMEL USB Drivers
+# A commented line starts with '#' 
+
+# Select the corresponding regulatory domain. Default value : 1
+# Channel       1-11    USA
+# Channel       1-11    Canada
+# Channel       1-13    Europe (ex Spain/France)
+# Channel       10-11   Spain
+# Channel       10-13   France
+# Channel       14      Japan
+# Channel       1-14    Japan(MKK1)
+# Channel       3-9     Israel
+
+regulatory_domain=
+
+# Enter the name of the Interface. Default value : eth1
+
+interface=
+
+# Enter the Essid  of your choice ( Max 32 characters ). Default value : Test
+
+essid=
+
+# Enter the Mode. Default value : Ad-hoc 
+
+mode=
+
+# Enter the Channel. Default value : 4
+
+channel=
+
+#Enter the Rate. Default value : 11M
+
+rate=
+
+#Enter the Fragmentation threshold. Default value : 2346
+
+frag=
+
+#Enter the Rts threshold. Default value : 2347
+
+rts=
+
+# Enter the Encryption Settings :
+
+#Encryption enabled
+
+encryption=
+
+# Encryption Key
+
+key=
+
+#Key Value
+
+value=
+
+# Key mode
+
+wep=

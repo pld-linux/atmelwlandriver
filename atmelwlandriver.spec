@@ -7,14 +7,14 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 # TODO:
-# 		- X11 tools (xvnet is only graphical version of ncursed lvnet. do we need it?).
-#		- command line version of firmware upgrade tool.
+# 		- src/apps/winter
+#		- src/apps/fw-upgrade/fucd
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
 Version:	3.3.5.6
-%define		_rel	0.3
+%define		_rel	0.4
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -133,12 +133,14 @@ done
 %endif
 
 %if %{with userspace}
-#        make lvnet              - compile lvnet utility
 #        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
 
 %{__make} lvnet \
-	INC="%{_includedir}/ncurses -I../../includes" \
 	OPT="%{rpmcflags} %{rpmldflags}"
+
+%{__make} -C src/apps/fw-upgrade atmelup \
+	CCC=%{__cc} \
+	CCFLAGS="%{rpmcflags}"
 %endif
 
 %install
@@ -168,6 +170,7 @@ cp scripts/fastvnet.sh $RPM_BUILD_ROOT%{_sbindir}
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
 #mv -f scripts/.vnetrc $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
 install man/lvnet.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install src/apps/fw-upgrade/atmelup $RPM_BUILD_ROOT%{_sbindir}
 install src/apps/cmd_line/lvnet $RPM_BUILD_ROOT%{_sbindir}
 %endif
 
@@ -229,6 +232,7 @@ done
 %if %{with userspace}
 %files -n atmelwlandriver-tools
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/atmelup
 %attr(755,root,root) %{_sbindir}/lvnet
 %{_mandir}/man1/*
 %endif

@@ -23,6 +23,7 @@ BuildRequires:	rpmbuild(macros) >= 1.118
 BuildRequires:	%{kgcc_package}
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build
+BuildRequires:	kernel-source
 %endif
 %if %{with userspace}
 BuildRequires:	ncurses-devel

@@ -5,11 +5,14 @@
 %bcond_without	userspace	# don't build userspace applications
 %bcond_with	verbose		# verbose build (V=1)
 #
+# TODO:
+# 	- X11 tools
+#
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
 Version:	3.3.5.5
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -27,9 +30,9 @@ BuildRequires:	kernel-source
 %endif
 %if %{with userspace}
 BuildRequires:	ncurses-devel
-BuildRequires:	wxWindows-devel >= 2.4.0
-BuildRequires:	wxGTK-devel >= 2.4.0
-BuildRequires:	xforms-devel
+#BuildRequires:	wxWindows-devel >= 2.4.0
+#BuildRequires:	wxGTK-devel >= 2.4.0
+#BuildRequires:	xforms-devel
 %endif
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires:	wireless-tools
@@ -123,7 +126,7 @@ done
 #        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
 #        make install            - install modules and programs
 
-%{__make} lvnet INC="%{_includedir}/ncurses -I../winter"
+%{__make} lvnet INC="%{_includedir}/ncurses -I../../includes"
 
 #%{?with_apps:echo "CONFIG_APPS=y" >> .config}
 #%{__make} all \
@@ -133,6 +136,7 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_sbindir}
 
 %if %{with kernel}
 cd built
@@ -148,17 +152,17 @@ install smp/usb* \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net
 %endif
 cd -
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/pcmcia
+cp scripts/atmel.conf $RPM_BUILD_ROOT%{_sysconfdir}/pcmcia
+cp scripts/fastvnet.sh $RPM_BUILD_ROOT%{_sbindir}
 %endif
 
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_sysconfdir}/pcmcia,%{_mandir}/man1}
-cp scripts/atmel.conf $RPM_BUILD_ROOT%{_sysconfdir}/pcmcia
-cp scripts/fastvnet.sh $RPM_BUILD_ROOT%{_bindir}
+%if %{with userspace}
+install -d $RPM_BUILD_ROOT%{_mandir}/man1
 #mv -f scripts/.vnetrc $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
-
-#%{__make} install \
-#	DESTDIR=$RPM_BUILD_ROOT%{_prefix} \
-#        MODDIR=$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver} \
-#	MAN_PATH=$RPM_BUILD_ROOT%{_mandir}/man1
+install man/lvnet.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install src/apps/cmd_line/lvnet $RPM_BUILD_ROOT%{_sbindir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -199,7 +203,7 @@ done
 %doc CHANGES README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
 #%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
-%attr(755,root,root) %{_bindir}/fastvnet.sh
+%attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/*.ko*
 
@@ -209,7 +213,7 @@ done
 %doc CHANGES README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
 #%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
-%attr(755,root,root) %{_bindir}/fastvnet.sh
+%attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/*.ko*
 %endif
@@ -218,6 +222,6 @@ done
 %if %{with userspace}
 %files -n atmelwlandriver-tools
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_sbindir}/lvnet
 %{_mandir}/man1/*
 %endif

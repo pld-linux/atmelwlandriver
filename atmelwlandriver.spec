@@ -10,7 +10,7 @@
 #		- src/apps/fw-upgrade/fucd
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
+Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.3.5.6
 %define		_rel	2
@@ -56,7 +56,7 @@ ATMELA AT76C5XXx.
 
 %package -n kernel-net-atmelwlandriver
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuxa do kart WLAN na uk³adzie AT76C5XXx
+Summary(pl):	Sterownik dla Linuksa do kart WLAN na uk³adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -74,7 +74,7 @@ ATMELA AT76C5XXx.
 
 %package -n kernel-smp-net-atmelwlandriver
 Summary:	Linux SMP driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuksa SMP do kart WLAN na uk³adzie AT76C5XXx
+Summary(pl):	Sterownik dla Linuksa SMP do kart WLAN na uk³adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
@@ -92,20 +92,20 @@ uk³ady ATMELA AT76C5XXx.
 
 %package tools
 Summary:	Command line tools for managing ATMEL Wireless Card
-Summary(pl):	Narzêdzia lini poleceñ do obs³ugi bezprzewodowych kart ATMEL
+Summary(pl):	Narzêdzia linii poleceñ do obs³ugi bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
 
 %description tools
-Managing tools for the ATMEL Wireless Card adapters. When the pcmcia
-module pcmf502*, the pci module pcifvnet, or the usb module usbvnet*
+Managing tools for the ATMEL Wireless Card adapters. When the PCMCIA
+module pcmf502*, the PCI module pcifvnet, or the USB module usbvnet*
 is loaded the lvnet application can monitor the device's statistics or
 change it's runtime parameters.
 
 %description tools -l pl
 Narzêdzia do obs³ugi dla adapterów kart sieci bezprzewodowych ATMEL.
-Kiedy modu³ pcmcia pcmf502*, modu³ pci pcifvnet, albo modu³ usb
+Kiedy modu³ PCMCIA pcmf502*, modu³ PCI pcifvnet, albo modu³ USB
 usbvnet* jest za³adowany to aplikacja lvnet mo¿e monitorowaæ dane
 statystyczne urz±dzenia albo zmieniæ parametry jego pracy.
 

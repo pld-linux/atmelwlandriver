@@ -22,6 +22,7 @@ Source1:	atmelwlandriver.config
 # Patch0:		atmelwlandriver-makefile.patch
 Patch1:		atmelwlandriver-etc.patch
 Patch2:		atmelwlandriver-fpmath.patch
+Patch3:		atmelwlandriver-delay.patch
 URL:		http://atmelwlandriver.sourceforge.net
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
@@ -92,6 +93,7 @@ pracy.
 #patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 cp -f Makefile{.kernelv2.6,}

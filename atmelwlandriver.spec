@@ -1,19 +1,15 @@
-%define rel	0.1
-%define         _kernel26       %(echo %{_kernel_ver} | grep -qv '2\.6\.' ; echo $?)
-#
 # Conditional build:
 %bcond_without	dist_kernel	# Don't use a packaged kernel
+%bcond_without	kernel		# don't build kernel module(s)
 %bcond_without	smp		# Don't build the SMP module
 #
-%bcond_without 	pci		# Don't build pci drivers
-%bcond_without 	pcmcia		# Don't build pcmcia drivers
-%bcond_without 	usb		# Don't build usb drivers
 %bcond_without	apps		# Don't build applications
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
 Version:	3.3.5.5
+%define		rel	0.1
 Release:	%{rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -90,33 +86,46 @@ pracy.
 #%%patch0 -p1
 %patch1 -p1
 
-cp %{SOURCE1} .config
-%{?with_pci:echo "CONFIG_PCI=y" >> .config}
-%{?with_pcmcia:echo "CONFIG_PCMCIA=y" >> .config}
-%{?with_usb:echo "CONFIG_USB=y" >> .config}
-echo "KERNEL_SRC=/lib/modules/%{_kernel_ver}/build" >> .config
-echo "PCMCIA_SRC=/lib/modules/%{_kernel_ver}/build" >> .config
-
-%if %{_kernel26}
-echo "NEW_KERNEL=y" >> .config
-%endif
-
 %build
-KCFLAGS="-D__KERNEL__ -DMODULE %{rpmcflags} -fomit-frame-pointer -pipe"
-KCFLAGS="$KCFLAGS -Wall -I%{_kernelsrcdir}/include"
+cp -f Makefile{.kernelv2.6,}
 
-# SMP build
-%if %{with smp}
-%{__make} all \
-	KCFLAGS="$KCFLAGS -D__SMP__ -D__KERNEL_SMP=1"
-mkdir objs-smp
-mv -f objs/*.o objs-smp/
+%if %{with kernel}
+# kernel module(s)
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    touch include/config/MARKER
+
+    %{__make} -C %{_kernelsrcdir} clean \
+	RCS_FIND_IGNORE="-name '*.ko' -o" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+
+    %{__make} pcmcia buildonly=release \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+
+    %{__make} usb buildonly=release \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+
+#    mv $mod_name.ko $mod_name-$cfg.ko
+done
 %endif
 
-%{?with_apps:echo "CONFIG_APPS=y" >> .config}
-%{__make} all \
-	KCFLAGS="$KCFLAGS" \
-	OPT="%{rpmcflags}" \
+#        make lvnet              - compile lvnet utility
+#        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
+#        make install            - install modules and programs
+
+#%{?with_apps:echo "CONFIG_APPS=y" >> .config}
+#%{__make} all \
+#	KCFLAGS="$KCFLAGS" \
+#	OPT="%{rpmcflags}" \
 
 %install
 rm -rf $RPM_BUILD_ROOT

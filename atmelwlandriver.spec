@@ -7,25 +7,25 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 # TODO:
-# 		- src/apps/winter
 #		- src/apps/fw-upgrade/fucd
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
 Version:	3.3.5.6
-%define		_rel	0.4
+%define		_rel	0.5
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/sourceforge/atmelwlandriver/atmelwlandriver-%{version}.tar.bz2
 # Source0-md5:	dd9a11d175ba0fbb62cf7fec5426f5de
-Source1:	atmelwlandriver.config
+Source1:	atmelwlandriver-vnetrc
 Patch0:		atmelwlandriver-makefile.patch
 Patch1:		atmelwlandriver-etc.patch
 Patch2:		atmelwlandriver-fpmath.patch
 Patch3:		atmelwlandriver-delay.patch
 Patch4:		atmelwlandriver-usb_defctrl.patch
+Patch5:		atmelwlandriver-winter-makefile.patch
 URL:		http://atmelwlandriver.sourceforge.net
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
@@ -36,8 +36,8 @@ BuildRequires:	kernel-source
 %if %{with userspace}
 BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
-#BuildRequires:	wxWindows-devel >= 2.4.0
-#BuildRequires:	wxGTK-devel >= 2.4.0
+BuildRequires:	wxWindows-devel >= 2.4.0
+BuildRequires:	wxGTK-devel >= 2.4.0
 #BuildRequires:	xforms-devel
 %endif
 %{?with_dist_kernel:%requires_releq_kernel_up}
@@ -99,6 +99,7 @@ pracy.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 ln -sf Makefile.kernelv2.6 Makefile
@@ -134,7 +135,8 @@ done
 %endif
 
 %if %{with userspace}
-#        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
+%{__make} winter \
+	OPT="%{rpmcflags}"
 
 %{__make} lvnet \
 	OPT="%{rpmcflags} %{rpmldflags}"
@@ -169,10 +171,11 @@ cp scripts/fastvnet.sh $RPM_BUILD_ROOT%{_sbindir}
 
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
-#mv -f scripts/.vnetrc $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
 install man/lvnet.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install src/apps/fw-upgrade/atmelup $RPM_BUILD_ROOT%{_sbindir}
 install src/apps/cmd_line/lvnet $RPM_BUILD_ROOT%{_sbindir}
+install objs/winter $RPM_BUILD_ROOT%{_sbindir}
 %endif
 
 %clean
@@ -182,9 +185,9 @@ rm -rf $RPM_BUILD_ROOT
 for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
     cuted_i=$(basename $i|cut -d. -f1)
     if  [ -f $i ]; then
-	if ( grep $cuted_i /etc/modules.conf >/dev/null ); then
+	if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
 	    echo "NOP" >/dev/null; else
-		echo "#post-install $cuted_i /bin/fastvnet.sh">> /etc/modules.conf;
+		echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
 	fi
     fi
 done
@@ -197,9 +200,9 @@ done
 for i in /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/usbvnet* ; do
     cuted_i=$(basename $i|cut -d. -f1)
     if  [ -f $i ]; then
-	if ( grep $cuted_i /etc/modules.conf >/dev/null ); then
+	if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
 	    echo "NOP" >/dev/null; else
-	    echo "#post-install $cuted_i /bin/fastvnet.sh">> /etc/modules.conf;
+	    echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
 	fi
     fi
 done
@@ -213,7 +216,7 @@ done
 %defattr(644,root,root,755)
 %doc CHANGES README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
 %attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/*.ko*
@@ -223,7 +226,7 @@ done
 %defattr(644,root,root,755)
 %doc CHANGES README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
-#%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
 %attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/*.ko*
@@ -235,5 +238,6 @@ done
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/atmelup
 %attr(755,root,root) %{_sbindir}/lvnet
+%attr(755,root,root) %{_sbindir}/winter
 %{_mandir}/man1/*
 %endif

@@ -11,9 +11,9 @@
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
-Name:		kernel-net-atmelwlandriver
+Name:		atmelwlandriver
 Version:	3.3.5.6
-%define		_rel	1
+%define		_rel	2
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel

@@ -19,7 +19,7 @@ Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/sourceforge/atmelwlandriver/atmelwlandriver-%{version}.tar.bz2
 # Source0-md5:	dd9a11d175ba0fbb62cf7fec5426f5de
 Source1:	atmelwlandriver.config
-# Patch0:		atmelwlandriver-makefile.patch
+Patch0:		atmelwlandriver-makefile.patch
 Patch1:		atmelwlandriver-etc.patch
 Patch2:		atmelwlandriver-fpmath.patch
 Patch3:		atmelwlandriver-delay.patch
@@ -91,14 +91,14 @@ pracy.
 
 %prep
 %setup -q -n atmelwlandriver
-#patch0 -p1
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 
 %build
-cp -f Makefile{.kernelv2.6,}
+ln -sf Makefile.kernelv2.6 Makefile
 
 %if %{with kernel}
 # kernel module(s)
@@ -119,9 +119,11 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
     %{__make} pcmcia buildonly=release \
+	KERNEL_VERSION=%{__kernel_ver} \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
     %{__make} usb buildonly=release \
+	KERNEL_VERSION=%{__kernel_ver} \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
     mv -f objs/*/release/*.ko built/$cfg

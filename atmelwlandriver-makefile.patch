@@ -1,10 +1,10 @@
-diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kernelv2.6
---- atmelwlandriver.orig/Makefile.kernelv2.6	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/Makefile.kernelv2.6	2004-07-19 10:45:29.000000000 +0200
-@@ -4,15 +4,13 @@
+diff -dur atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kernelv2.6
+--- atmelwlandriver.orig/Makefile.kernelv2.6	2004-08-25 05:17:05.000000000 +0200
++++ atmelwlandriver/Makefile.kernelv2.6	2004-08-30 21:22:33.286984975 +0200
+@@ -5,15 +5,13 @@
  SCRIPTSDIR=$(TOPDIR)/scripts
  INC=$(TOPDIR)/src/includes
- VERSION=3.4.0.1
+ VERSION=3.4.0.2
 -MINOR_NUMBER=$(shell uname -r | cut -d . -f 3 | cut -d - -f 1)
  ID:=$(shell id -u)
  tmpDIR:=/tmp/atm$(shell date +%S.%s)
@@ -15,9 +15,9 @@ diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
 -KERNEL_VERSION:=$(shell uname -r)
 -KERNEL_SOURCE:=/lib/modules/$(KERNEL_VERSION)/build
 +KERNEL_SOURCE:=/usr/src/linux
- PCMCIA_DES = /lib/modules/$(KERNEL_VERSION)/pcmcia
- PCI_DES = /lib/modules/$(KERNEL_VERSION)/kernel/drivers/net
- USB_DES = /lib/modules/$(KERNEL_VERSION)/kernel/drivers/usb
+ PCMCIA_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/pcmcia
+ PCI_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/net
+ USB_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/usb
 @@ -99,34 +97,15 @@
  $(all_targets): %:
  	@echo Building $@
@@ -54,10 +54,9 @@ diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
  		(cd $(OBJDIR)/$@/release; make) ; \
  	fi
  
-
-diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmcia_Pci/Makefile
---- atmelwlandriver.orig/src/Pcmcia_Pci/Makefile	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/src/Pcmcia_Pci/Makefile	2004-07-19 10:54:28.066481184 +0200
+diff -dur atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmcia_Pci/Makefile
+--- atmelwlandriver.orig/src/Pcmcia_Pci/Makefile	2004-08-25 05:17:04.000000000 +0200
++++ atmelwlandriver/src/Pcmcia_Pci/Makefile	2004-08-30 21:21:59.985610940 +0200
 @@ -5,22 +5,7 @@
  include .lastbuild
  endif
@@ -82,27 +81,9 @@ diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmci
  PCMCIAADDONFLAGS := -I$(PCMCIA_SRC)/include
  srcs := card.c command.c common.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
  pcisrcs := $(patsubst fastvnet_cs.c, fastvnet_cs.c ,$(srcs))
-diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
---- atmelwlandriver.orig/src/usb/Makefile	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/src/usb/Makefile	2004-07-19 10:54:28.067481032 +0200
-@@ -1,13 +1,8 @@
- include .lastbuild
- include $(TOPDIR)/.config
--ARCH=$(shell uname -m)
- MODULE := usbvnet.o
--CDEBUG := -DUSBDBG
--DEFS := -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) -fno-optimize-sibling-calls 
- USB_DES := $(MODULES_DES)/kernel/drivers/net
--CC=gcc
--CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
--CFLAGS :=-D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb 
-+CFLAGS += -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb 
- 
- $(CFLAGS_y)
- # Add extra compilation flags if under version 2.5 or higher
-diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
---- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 12:16:29.080700072 +0200
+diff -dur atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
+--- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-08-25 05:17:04.000000000 +0200
++++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-08-30 21:21:59.988610523 +0200
 @@ -1,22 +1,8 @@
 -KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
 -
@@ -128,9 +109,9 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 +	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
  	@install -m 755 lvnet $(OBJs)/
 -endif
-diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
---- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2004-07-19 12:27:38.317960544 +0200
+diff -dur atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
+--- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2004-08-25 05:17:04.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2004-08-30 21:21:59.988610523 +0200
 @@ -7,7 +7,7 @@
  CCC:=gcc
  CFLAGS:=$(shell wx-config --cxxflags) 
@@ -140,3 +121,21 @@ diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/
  OUTDIR:="/usr/local/bin"
  
  
+diff -dur atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
+--- atmelwlandriver.orig/src/usb/Makefile	2004-08-25 05:17:05.000000000 +0200
++++ atmelwlandriver/src/usb/Makefile	2004-08-30 21:21:59.987610662 +0200
+@@ -1,13 +1,8 @@
+ include .lastbuild
+ include $(TOPDIR)/.config
+-ARCH=$(shell uname -m)
+ MODULE := usbvnet.o
+-CDEBUG := -DUSBDBG
+-DEFS := -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) -fno-optimize-sibling-calls 
+ USB_DES := $(MODULES_DES)/kernel/drivers/net
+-CC=gcc
+-CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
+-CFLAGS :=-D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb 
++CFLAGS += -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb 
+ 
+ $(CFLAGS_y)
+ # Add extra compilation flags if under version 2.5 or higher

@@ -10,21 +10,21 @@
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
-Version:	3.4.0.2
-%define		_rel	0.2
+Version:	3.4.1.0
+%define		_rel	0.1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/atmelwlandriver/%{name}-%{version}.tar.bz2
-# Source0-md5:	b5cd84930378981bf86f041c46dfb557
+# Source0-md5:	288882c65cc13fbe48d5c5ed69aba1a8
+# Source0-size:	720567
 Source1:	%{name}-vnetrc
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-etc.patch
 #Patch2:		%{name}-fpmath.patch
 #Patch3:		%{name}-delay.patch
-Patch4:		%{name}-usb_defctrl.patch
+#Patch4:		%{name}-usb_defctrl.patch
 Patch5:		%{name}-winter-makefile.patch
-Patch6:		%{name}-fucd-makefile.patch
 URL:		http://atmelwlandriver.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
@@ -37,8 +37,7 @@ BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
 BuildRequires:	wxWindows-devel >= 2.4.0
-BuildRequires:	wxGTK-devel >= 2.4.0
-#BuildRequires:	xforms-devel
+BuildRequires:	wxGTK2-devel >= 2.4.0
 %endif
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires:	wireless-tools
@@ -149,9 +148,8 @@ kart ATMELa.
 %patch1 -p1
 #patch2 -p1
 #patch3 -p1
-#%patch4 -p1
+#patch4 -p1
 %patch5 -p1
-%patch6 -p1
 
 %build
 ln -sf Makefile.kernelv2.6 Makefile
@@ -238,32 +236,32 @@ install src/apps/fw-upgrade/fucd $RPM_BUILD_ROOT%{_sbindir}
 rm -rf $RPM_BUILD_ROOT
 
 %post -n kernel-net-atmelwlandriver
-for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
-	cuted_i=$(basename $i|cut -d. -f1)
-	if [ -f $i ]; then
-		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
-			echo "NOP" >/dev/null;
-		else
-			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
-		fi
-	fi
-done
+#for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
+#	cuted_i=$(basename $i|cut -d. -f1)
+#	if [ -f $i ]; then
+#		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
+#			echo "NOP" >/dev/null;
+#		else
+#			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
+#		fi
+#	fi
+#done
 %depmod %{_kernel_ver}
 
 %postun -n kernel-net-atmelwlandriver
 %depmod %{_kernel_ver}
 
 %post -n kernel-smp-net-atmelwlandriver
-for i in /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/usbvnet* ; do
-	cuted_i=$(basename $i|cut -d. -f1)
-	if [ -f $i ]; then
-		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
-			echo "NOP" >/dev/null;
-		else
-			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
-		fi
-	fi
-done
+#for i in /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/usbvnet* ; do
+#	cuted_i=$(basename $i|cut -d. -f1)
+#	if [ -f $i ]; then
+#		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
+#			echo "NOP" >/dev/null;
+#		else
+#			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
+#		fi
+#	fi
+#done
 %depmod %{_kernel_ver}smp
 
 %postun -n kernel-smp-net-atmelwlandriver

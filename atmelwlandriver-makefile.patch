@@ -138,3 +138,30 @@ diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
  	ld -m elf_i386 -r -o $(OBJDIR)/$(MODULE).ko vnetusba.o $(objs) $(OBJDIR)/$(MAGICMOD).o
  	@nm $(OBJDIR)/$(MODULE).ko |sort >../$(patsubst %.ko,%.map, $(MODULE).ko);
  else
+diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
+--- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-06-05 06:11:18.000000000 +0200
++++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 11:11:02.173353968 +0200
+@@ -1,22 +1,8 @@
+-KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
+-
+-ifeq '$(KERNEL_VERSION_NUMBER)' '4'
+-include $(TOPDIR)/.config
+-endif
+-
+ OBJs=../../../objs
+-FLAGS1:=-DATMEL_WLAN -DATMEL -O2 -g
++FLAGS1:=-DATMEL_WLAN -DATMEL $(OPT)
+ FLAGS2:=-lncurses
+-FLAGS3:=-DLOW_RES
+-CC:=gcc
+ 
+-ifeq '$(KERNEL_VERSION_NUMBER)' '4'
+-all:
+-	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+-	@install -m 755 lvnet $(OBJs)/
+-else
+ INC = ../../includes
+ all:
+ 	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+ 	@install -m 755 lvnet $(OBJs)/
+-endif

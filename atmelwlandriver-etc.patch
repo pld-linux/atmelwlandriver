@@ -1,0 +1,12 @@
+diff -urN atmelwlandriver/scripts/fastvnet.sh atmelwlandriver-config/scripts/fastvnet.sh
+--- atmelwlandriver/scripts/fastvnet.sh	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-config/scripts/fastvnet.sh	2003-12-13 23:36:16.000000000 +0100
+@@ -2,7 +2,7 @@
+ # ATMEL Wireless Card Initialization script of the corresponding module
+ # Copyright 2001 (c) ATMEL Hellas
+ 
+-CFG=/root/.vnetrc
++CFG=/etc/vnetrc
+ 
+ 
+ strconcat()

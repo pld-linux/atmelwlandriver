@@ -11,21 +11,21 @@
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
-Version:	3.3.5.5
-%define		_rel	0.2
+Version:	3.3.5.6
+%define		_rel	0.1
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/sourceforge/atmelwlandriver/atmelwlandriver-%{version}.tar.bz2
-# Source0-md5:	4248ff3f0a0d7d3f83d02cb540bff6f9
+# Source0-md5:	dd9a11d175ba0fbb62cf7fec5426f5de
 Source1:	atmelwlandriver.config
 # Patch0:		atmelwlandriver-makefile.patch
 Patch1:		atmelwlandriver-etc.patch
 URL:		http://atmelwlandriver.sourceforge.net
-BuildRequires:	rpmbuild(macros) >= 1.118
+BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
 %if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel-module-build
+BuildRequires:	kernel-module-build >= 2.6.7
 BuildRequires:	kernel-source
 %endif
 %if %{with userspace}
@@ -88,7 +88,7 @@ pracy.
 
 %prep
 %setup -q -n atmelwlandriver
-#%%patch0 -p1
+#patch0 -p1
 %patch1 -p1
 
 %build
@@ -106,6 +106,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
     install -d include/{linux,config}
     ln -sf %{_kernelsrcdir}/config-$cfg .config
     ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
     touch include/config/MARKER
     %{__make} -C %{_kernelsrcdir} clean \
 	RCS_FIND_IGNORE="-name '*.ko' -o" \

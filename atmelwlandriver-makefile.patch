@@ -166,3 +166,15 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 +	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
  	@install -m 755 lvnet $(OBJs)/
 -endif
+diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
+--- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2004-06-05 06:11:18.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2004-07-19 12:27:38.317960544 +0200
+@@ -7,7 +7,7 @@
+ CCC:=gcc
+ CFLAGS:=$(shell wx-config --cxxflags) 
+ CFLAGS1:=$(shell wx-config --libs)
+-CCFLAGS:= -O2 -Wall -Wstrict-prototypes
++CCFLAGS:=$(OPT)
+ OUTDIR:="/usr/local/bin"
+ 
+ 

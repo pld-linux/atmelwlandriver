@@ -1,3 +1,4 @@
+#
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -6,13 +7,14 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 # TODO:
-# 	- X11 tools
+# 		- X11 tools (xvnet is only graphical version of ncursed lvnet. do we need it?).
+#		- command line version of firmware upgrade tool.
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
 Name:		kernel-net-atmelwlandriver
 Version:	3.3.5.6
-%define		_rel	0.2
+%define		_rel	0.3
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -133,14 +135,10 @@ done
 %if %{with userspace}
 #        make lvnet              - compile lvnet utility
 #        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
-#        make install            - install modules and programs
 
-%{__make} lvnet INC="%{_includedir}/ncurses -I../../includes"
-
-#%{?with_apps:echo "CONFIG_APPS=y" >> .config}
-#%{__make} all \
-#	KCFLAGS="$KCFLAGS" \
-#	OPT="%{rpmcflags}" \
+%{__make} lvnet \
+	INC="%{_includedir}/ncurses -I../../includes" \
+	OPT="%{rpmcflags} %{rpmldflags}"
 %endif
 
 %install

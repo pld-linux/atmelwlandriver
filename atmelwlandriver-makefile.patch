@@ -4,7 +4,7 @@ diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
 @@ -4,15 +4,13 @@
  SCRIPTSDIR=$(TOPDIR)/scripts
  INC=$(TOPDIR)/src/includes
- VERSION=3.3.5.6
+ VERSION=3.4.0.1
 -MINOR_NUMBER=$(shell uname -r | cut -d . -f 3 | cut -d - -f 1)
  ID:=$(shell id -u)
  tmpDIR:=/tmp/atm$(shell date +%S.%s)
@@ -13,7 +13,7 @@ diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
  WINTER = $(shell pwd)/src/apps/winter
  
 -KERNEL_VERSION:=$(shell uname -r)
--KERNEL_SOURCE:=/usr/src/linux-$(KERNEL_VERSION)
+-KERNEL_SOURCE:=/lib/modules/$(KERNEL_VERSION)/build
 +KERNEL_SOURCE:=/usr/src/linux
  PCMCIA_DES = /lib/modules/$(KERNEL_VERSION)/pcmcia
  PCI_DES = /lib/modules/$(KERNEL_VERSION)/kernel/drivers/net
@@ -54,13 +54,15 @@ diff -uNr atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
  		(cd $(OBJDIR)/$@/release; make) ; \
  	fi
  
+
 diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmcia_Pci/Makefile
 --- atmelwlandriver.orig/src/Pcmcia_Pci/Makefile	2004-06-05 06:11:18.000000000 +0200
 +++ atmelwlandriver/src/Pcmcia_Pci/Makefile	2004-07-19 10:54:28.066481184 +0200
-@@ -5,28 +5,15 @@
+@@ -5,22 +5,7 @@
  include .lastbuild
  endif
  
+-ARCH=$(shell uname -m)
 -VR:=$(shell uname -r)
 -ID:=$(shell id -u)
 -ifneq ($(VR),$(UNAME))
@@ -71,77 +73,37 @@ diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmci
 -	@echo
 -endif
 -
- # Add extra compilation flags if under version 2.5 or higher
- NEWKERNFLAGS := -D__KERNEL__ -nostdinc -iwithprefix include -DMODULE -DKBUILD_BASENAME=fastvnet_cs 
--MODOFLAGS := -I$(KERNEL_SRC)/include -D__KERNEL__ -Wstrict-prototypes -Wno-trigraphs -O2 -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -DMODULE 
- KMODNAMEFLAG := -DKBUILD_MODNAME=
- 
- 
 -CC:=gcc
- CDEBUG:= -DPCMCIA_DEBUG=1
--DEFS := -pipe -O2 -fomit-frame-pointer -fno-strict-aliasing
- 
- CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
--CFLAGS := -DLINUX_OS -D__KERNEL__ $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
-+CFLAGS := -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
+-CDEBUG:= -DPCMCIA_DEBUG=1
+-DEFS :=  -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) -fno-optimize-sibling-calls 
+-CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
+-CFLAGS := -DLINUX_OS -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
++CFLAGS += -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
  PCMCIAADDONFLAGS := -I$(PCMCIA_SRC)/include
- srcs := card.c command.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
+ srcs := card.c command.c common.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
  pcisrcs := $(patsubst fastvnet_cs.c, fastvnet_cs.c ,$(srcs))
-@@ -75,7 +62,7 @@
- 	ld -r -o $(OBJDIR)/$(MODULE).o fastvnet_cs.o $(DEBUGORNO) $(objs)
- 	nm $(OBJDIR)/$(MODULE).o |sort -u >$(OBJDIR)/$(patsubst %.o,%.map,$(MODULE).o); 
- ifeq 	'$(NEW_KERN)' 'y'
--	$(CC) $(MODOFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
-+	$(CC) $(CFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
- 	ld -r -o $(OBJDIR)/$(MODULE).ko $(OBJDIR)/$(MODULE).o $(OBJDIR)/$(MAGICMOD).o
- endif
- 
 diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
 --- atmelwlandriver.orig/src/usb/Makefile	2004-06-05 06:11:18.000000000 +0200
 +++ atmelwlandriver/src/usb/Makefile	2004-07-19 10:54:28.067481032 +0200
-@@ -3,28 +3,16 @@
- 
+@@ -1,13 +1,8 @@
+ include .lastbuild
+ include $(TOPDIR)/.config
+-ARCH=$(shell uname -m)
  MODULE := usbvnet.o
- CDEBUG := -DUSBDBG
--DEFS := -fno-strict-aliasing -fomit-frame-pointer -pipe        
+-CDEBUG := -DUSBDBG
+-DEFS := -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) -fno-optimize-sibling-calls 
  USB_DES := $(MODULES_DES)/kernel/drivers/net
 -CC=gcc
- CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
--ifeq 	'$(NEW_KERN)' 'y'
--CFLAGS :=-D__KERNEL__ -O2 $(DEFS) -I$(KERNEL_SRC)/drivers/usb/core -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb -Wall $(CFLAGS_y)
--else
--CFLAGS :=-D__KERNEL__ -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb -Wall $(CFLAGS_y)
--endif
-+CFLAGS := -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb $(CFLAGS_y)
+-CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
+-CFLAGS :=-D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb 
++CFLAGS += -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb 
+ 
+ $(CFLAGS_y)
  # Add extra compilation flags if under version 2.5 or higher
- NEWKERNFLAGS := -nostdinc -iwithprefix include -DMODULE -DKBUILD_BASENAME=vnetusba 
--MODOFLAGS := -I$(KERNEL_SRC)/include -D__KERNEL__ -Wstrict-prototypes -Wno-trigraphs -O2 -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -Iinclude/asm-i386/mach-default -DMODULE 
- KMODNAMEFLAG := -DKBUILD_MODNAME=
- MAGICMOD:= magic.mod
- 
--ifeq 	'$(NEW_KERN)' 'y'
- RESET_DEVICE:= reset_device.c
- MAGIC_MOD:= magic.mod.c
--else
--RESET_DEVICE:=
--MAGIC_MOD:=
--endif
- 
- fws:=$(wildcard external*.h) $(wildcard internal*.h)
- 
-@@ -52,7 +40,7 @@
- 
- final:$(objs) vnetusba.o
- ifeq 	'$(NEW_KERN)' 'y'
--	$(CC) $(MODOFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
-+	$(CC) $(CFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
- 	ld -m elf_i386 -r -o $(OBJDIR)/$(MODULE).ko vnetusba.o $(objs) $(OBJDIR)/$(MAGICMOD).o
- 	@nm $(OBJDIR)/$(MODULE).ko |sort >../$(patsubst %.ko,%.map, $(MODULE).ko);
- else
 diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
 --- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-06-05 06:11:18.000000000 +0200
 +++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 12:16:29.080700072 +0200
-@@ -1,22 +1,8 @@
+@@ -1,22 +1,7 @@
 -KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
 -
 -ifeq '$(KERNEL_VERSION_NUMBER)' '4'
@@ -149,8 +111,8 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 -endif
 -
  OBJs=../../../objs
--FLAGS1:=-DATMEL_WLAN -DATMEL -O2 -g
-+FLAGS1:=-DATMEL_WLAN -DATMEL $(OPT)
+-FLAGS1:=-Wall -DATMEL_WLAN -DATMEL -O2 -g
++FLAGS1:=-Wall -DATMEL_WLAN -DATMEL $(OPT)
  FLAGS2:=-lncurses
 -FLAGS3:=-DLOW_RES
 -CC:=gcc
@@ -160,7 +122,7 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 -	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
 -	@install -m 755 lvnet $(OBJs)/
 -else
- INC = ../../includes
+-INC = ../../includes
  all:
 -	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
 +	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 

@@ -17,16 +17,16 @@ Version:	3.3.5.6
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
-Source0:	http://dl.sourceforge.net/sourceforge/atmelwlandriver/atmelwlandriver-%{version}.tar.bz2
+Source0:	http://dl.sourceforge.net/atmelwlandriver/%{name}-%{version}.tar.bz2
 # Source0-md5:	dd9a11d175ba0fbb62cf7fec5426f5de
-Source1:	atmelwlandriver-vnetrc
-Patch0:		atmelwlandriver-makefile.patch
-Patch1:		atmelwlandriver-etc.patch
-Patch2:		atmelwlandriver-fpmath.patch
-Patch3:		atmelwlandriver-delay.patch
-Patch4:		atmelwlandriver-usb_defctrl.patch
-Patch5:		atmelwlandriver-winter-makefile.patch
-URL:		http://atmelwlandriver.sourceforge.net
+Source1:	%{name}-vnetrc
+Patch0:		%{name}-makefile.patch
+Patch1:		%{name}-etc.patch
+Patch2:		%{name}-fpmath.patch
+Patch3:		%{name}-delay.patch
+Patch4:		%{name}-usb_defctrl.patch
+Patch5:		%{name}-winter-makefile.patch
+URL:		http://atmelwlandriver.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.153
 BuildRequires:	%{kgcc_package}
 %if %{with kernel} && %{with dist_kernel}
@@ -54,9 +54,27 @@ Linux.
 Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
 ATMELA AT76C5XXx.
 
-%package -n kernel-smp-net-atmelwlandriver
+%package -n kernel-net-atmelwlandriver
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN na uk³adzie AT76C5XXx
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+%{?with_dist_kernel:%requires_releq_kernel_up}
+Requires:	wireless-tools
+Requires(post,postun):	/sbin/depmod
+Provides:	kernel-net(atmelwlandriver) = %{version}
+
+%description -n kernel-net-atmelwlandriver
+This is driver for WLAN card based on ATMEL AT76C5XXx devices for
+Linux.
+
+%description -n kernel-net-atmelwlandriver -l pl
+Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
+ATMELA AT76C5XXx.
+
+%package -n kernel-smp-net-atmelwlandriver
+Summary:	Linux SMP driver for WLAN card based on AT76C5XXx
+Summary(pl):	Sterownik dla Linuksa SMP do kart WLAN na uk³adzie AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
@@ -66,26 +84,26 @@ Provides:	kernel-net(atmelwlandriver) = %{version}
 
 %description -n kernel-smp-net-atmelwlandriver
 This is driver for WLAN card based on ATMEL AT76C5XXx devices for
-Linux.
+Linux SMP.
 
 %description -n kernel-smp-net-atmelwlandriver -l pl
-Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
-ATMELA AT76C5XXx.
+Sterownik dla Linuksa SMP do kart sieci bezprzewodowych opartych o
+uk³ady ATMELA AT76C5XXx.
 
-%package -n atmelwlandriver-tools
+%package tools
 Summary:	Tools for monitoring ATMEL Wireless Card
 Summary(pl):	Narzêdzia do monitorowania bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
 
-%description -n atmelwlandriver-tools
+%description tools
 Monitoring tools for the ATMEL Wireless Card adapters. When the pcmcia
 module pcmf502*, the pci module pcifvnet, or the usb module usbvnet*
 is loaded the lvnet, xvnet, winter application can monitor the
 device's statistics or change it's runtime parameters.
 
-%description -n atmelwlandriver-tools -l pl
+%description tools -l pl
 Narzêdzia monitourj±ce dla adapterów kart sieci bezprzewodowych ATMEL.
 Kiedy modu³ pcmcia pcmf502*, modu³ pci pcifvnet, albo modu³ usb
 usbvnet* jest za³adowany to aplikacja lvnet, xvnet, winter mo¿e
@@ -181,7 +199,7 @@ install objs/winter $RPM_BUILD_ROOT%{_sbindir}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
+%post -n kernel-net-atmelwlandriver
 for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
     cuted_i=$(basename $i|cut -d. -f1)
     if  [ -f $i ]; then
@@ -193,7 +211,7 @@ for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
 done
 %depmod %{_kernel_ver}
 
-%postun
+%postun -n kernel-net-atmelwlandriver
 %depmod %{_kernel_ver}
 
 %post -n kernel-smp-net-atmelwlandriver
@@ -212,7 +230,7 @@ done
 %depmod %{_kernel_ver}smp
 
 %if %{with kernel}
-%files
+%files -n kernel-net-atmelwlandriver
 %defattr(644,root,root,755)
 %doc CHANGES README
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
@@ -234,7 +252,7 @@ done
 %endif
 
 %if %{with userspace}
-%files -n atmelwlandriver-tools
+%files tools
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/atmelup
 %attr(755,root,root) %{_sbindir}/lvnet

@@ -83,7 +83,7 @@ diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmci
  
  CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
 -CFLAGS := -DLINUX_OS -D__KERNEL__ $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
-+CFLAGS := $(KCFLAGS) -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
++CFLAGS := -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
  PCMCIAADDONFLAGS := -I$(PCMCIA_SRC)/include
  srcs := card.c command.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
  pcisrcs := $(patsubst fastvnet_cs.c, fastvnet_cs.c ,$(srcs))
@@ -92,7 +92,7 @@ diff -uNr atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmci
  	nm $(OBJDIR)/$(MODULE).o |sort -u >$(OBJDIR)/$(patsubst %.o,%.map,$(MODULE).o); 
  ifeq 	'$(NEW_KERN)' 'y'
 -	$(CC) $(MODOFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
-+	$(CC) $(KCFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
++	$(CC) $(CFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
  	ld -r -o $(OBJDIR)/$(MODULE).ko $(OBJDIR)/$(MODULE).o $(OBJDIR)/$(MAGICMOD).o
  endif
  
@@ -112,7 +112,7 @@ diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
 -else
 -CFLAGS :=-D__KERNEL__ -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb -Wall $(CFLAGS_y)
 -endif
-+CFLAGS :=$(KCFLAGS) -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb $(CFLAGS_y)
++CFLAGS := -I$(KERNEL_SRC)/drivers/usb/core -I$(INC) -I$(INC)/usb $(CFLAGS_y)
  # Add extra compilation flags if under version 2.5 or higher
  NEWKERNFLAGS := -nostdinc -iwithprefix include -DMODULE -DKBUILD_BASENAME=vnetusba 
 -MODOFLAGS := -I$(KERNEL_SRC)/include -D__KERNEL__ -Wstrict-prototypes -Wno-trigraphs -O2 -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -Iinclude/asm-i386/mach-default -DMODULE 
@@ -134,13 +134,13 @@ diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
  final:$(objs) vnetusba.o
  ifeq 	'$(NEW_KERN)' 'y'
 -	$(CC) $(MODOFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
-+	$(CC) $(KCFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
++	$(CC) $(CFLAGS) -c -o $(OBJDIR)/$(MAGICMOD).o $(MAGICMOD).c
  	ld -m elf_i386 -r -o $(OBJDIR)/$(MODULE).ko vnetusba.o $(objs) $(OBJDIR)/$(MAGICMOD).o
  	@nm $(OBJDIR)/$(MODULE).ko |sort >../$(patsubst %.ko,%.map, $(MODULE).ko);
  else
 diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
 --- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-06-05 06:11:18.000000000 +0200
-+++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 11:11:02.173353968 +0200
++++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 12:16:29.080700072 +0200
 @@ -1,22 +1,8 @@
 -KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
 -
@@ -162,6 +162,7 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 -else
  INC = ../../includes
  all:
- 	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+-	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
++	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
  	@install -m 755 lvnet $(OBJs)/
 -endif

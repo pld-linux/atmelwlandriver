@@ -1,0 +1,24 @@
+--- atmelwlandriver/src/apps/winter/Makefile.rules.orig	2004-08-03 21:44:43.000000000 +0200
++++ atmelwlandriver/src/apps/winter/Makefile.rules	2004-08-03 21:54:48.000000000 +0200
+@@ -5,9 +5,9 @@
+ 
+ all: postmake
+ 
+-CC:=$(shell wx-config --cxx)
+-CFLAGS:=$(shell wx-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
+-CFLAGS1:=$(shell wx-config --libs)
++CC:=$(shell wxgtk-2.4-config --cxx)
++CFLAGS:=$(OPT) $(shell wxgtk-2.4-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
++CFLAGS1:=$(shell wxgtk-2.4-config --libs)
+ 
+ VPATH:=$(INC_DIR) $(SRC_DIR) $(RSRC_DIR)
+ 
+@@ -20,7 +20,7 @@
+ wxconfig:
+ 	@config_exists=no;\
+ 	for path_dir in `echo $(PATH) | tr : ' '`; do\
+-	  if test -f $$path_dir/wx-config; then\
++	  if test -f $$path_dir/wxgtk-2.4-config; then\
+ 	    config_exists=yes;\
+ 	  fi\
+ 	done;\

@@ -11,7 +11,7 @@ Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.4.0.1
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -35,6 +35,7 @@ BuildRequires:	kernel-source
 %if %{with userspace}
 BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
+BuildRequires:	ncurses-ext-devel
 BuildRequires:	wxWindows-devel >= 2.4.0
 BuildRequires:	wxGTK-devel >= 2.4.0
 #BuildRequires:	xforms-devel
@@ -221,11 +222,11 @@ cd -
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/pcmcia
 cp scripts/atmel.conf $RPM_BUILD_ROOT%{_sysconfdir}/pcmcia
 cp scripts/fastvnet.sh $RPM_BUILD_ROOT%{_sbindir}
+install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
 %endif
 
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/vnetrc
 install man/lvnet.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install src/apps/fw-upgrade/atmelup $RPM_BUILD_ROOT%{_sbindir}
 install src/apps/cmd_line/lvnet $RPM_BUILD_ROOT%{_sbindir}

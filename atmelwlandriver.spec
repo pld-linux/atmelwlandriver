@@ -34,6 +34,7 @@ BuildRequires:	kernel-module-build >= 2.6.7
 BuildRequires:	kernel-source
 %endif
 %if %{with userspace}
+BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 #BuildRequires:	wxWindows-devel >= 2.4.0
 #BuildRequires:	wxGTK-devel >= 2.4.0

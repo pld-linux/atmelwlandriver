@@ -1,0 +1,172 @@
+diff -urN atmelwlandriver/Makefile atmelwlandriver-Makefiles/Makefile
+--- atmelwlandriver/Makefile	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-Makefiles/Makefile	2003-12-20 22:52:55.000000000 +0100
+@@ -28,27 +28,31 @@
+ 	@echo Building $(BUILD-y)
+ 	@for i in $(BUILD-y); do make -C $$i all || exit 1; done
+ 
+-ifeq (.config, $(wildcard .config))
++#ifeq (.config, $(wildcard .config))
+ include .config
+-check:dummy
+-else
+-check:config
+-endif
++#check:dummy
++#else
++#check:config
++#endif
+ 
+ BUILD-y:=
+ BUILD-n:=
+ BUILD- :=
+ ifeq ('$(CONFIG_PCMCIA)', 'y')
+ BUILD-$(CONFIG_PCMCIA) += src/Pcmcia_Pci
+-ifeq ($(CONFIG_PCI), 'y')
+-endif
+-else
+-BUILD-$(CONFIG_PCI) += src/Pcmcia_Pci
++#ifeq ($(CONFIG_PCI), 'y')
++#endif
++#else
++#BUILD-$(CONFIG_PCI) += src/Pcmcia_Pci
+ endif
++ifeq ('$(CONFIG_USB)', 'y')
+ BUILD-$(CONFIG_USB) += src/usb
++endif
++ifeq ('$(CONFIG_APPS)', 'y')
+ BUILD-$(CONFIG_CMD_LINE) += src/apps/cmd_line
+ BUILD-$(CONFIG_Winter) += src/apps/winter
+ BUILD-$(CONFIG_XAPP) += src/apps/XWlan
++endif
+ 
+ ifeq '$(NEW_KERN)' 'y'
+ 	MODEXT:=.ko
+@@ -73,23 +77,26 @@
+ 
+ install: 
+ 	set -x
+-ifeq '$(ID)' '0'
+-	@if (ls $(OBJDIR)/pcm*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)/pcm*$(MODEXT) $(PCMCIA_DES); fi
+-	@if (ls $(OBJDIR)/pci*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)/pci*$(MODEXT) $(PCI_DES); fi
+-	@if (ls $(OBJDIR)/usb*$(MODEXT) >/dev/null 2>&1); then install -m 644 objs/usb*$(MODEXT)  $(USB_DES); fi
+-	@if [ -f $(OBJDIR)/lvnet ]; then install -m 755 $(OBJDIR)/lvnet /bin/; fi
+-	@if [ -f $(OBJDIR)/winter ]; then install -m 755 $(OBJDIR)/winter /usr/X11R6/bin/; fi
+-	@if [ -f $(OBJDIR)/xvnet ]; then install -m 755 $(OBJDIR)/xvnet /usr/X11R6/bin/; fi
+-	@if [ -f $(SCRIPTSDIR)/fastvnet.sh ]; then install -m 755 $(SCRIPTSDIR)/fastvnet.sh /bin/; fi
+-	@bash $(SCRIPTSDIR)/append.sh
++#ifeq '$(ID)' '0'
++	@if (ls $(OBJDIR)/pcm*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)/pcm*$(MODEXT) $(MODDIR)/kernel/drivers/pcmcia; fi
++	@if (ls $(OBJDIR)/pci*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)/pci*$(MODEXT) $(MODDIR)/kernel/drivers/net; fi
++	@if (ls $(OBJDIR)/usb*$(MODEXT) >/dev/null 2>&1); then install -m 644 objs/usb*$(MODEXT)  $(MODDIR)/kernel/drivers/usb; fi
++	@if (ls $(OBJDIR)-smp/pcm*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)-smp/pcm*$(MODEXT) $(MODDIR)smp/kernel/drivers/pcmcia; fi
++	@if (ls $(OBJDIR)-smp/pci*$(MODEXT) >/dev/null 2>&1); then install -m 644 $(OBJDIR)-smp/pci*$(MODEXT) $(MODDIR)smp/kernel/drivers/net; fi
++	@if (ls $(OBJDIR)-smp/usb*$(MODEXT) >/dev/null 2>&1); then install -m 644 objs-smp/usb*$(MODEXT)  $(MODDIR)smp/kernel/drivers/usb; fi
++	@if [ -f $(OBJDIR)/lvnet ]; then install -m 755 $(OBJDIR)/lvnet $(DESTDIR)/bin/; fi
++	@if [ -f $(OBJDIR)/winter ]; then install -m 755 $(OBJDIR)/winter $(DESTDIR)/bin/; fi
++	@if [ -f $(OBJDIR)/xvnet ]; then install -m 755 $(OBJDIR)/xvnet $(DESTDIR)/bin/; fi
++	@if [ -f $(SCRIPTSDIR)/fastvnet.sh ]; then install -m 755 $(SCRIPTSDIR)/fastvnet.sh $(DESTDIR)/bin/; fi
++#	@bash $(SCRIPTSDIR)/append.sh
+ 	@install -m 644 man/*.1 $(MAN_PATH)
+-	depmod -aq
+-	@echo OK
+-else
++#	depmod -aq
++#	@echo OK
++#else
+ #	@echo -ne "\033[0;31m"
+-	@echo "You must have root privileges to install the driver"
++#	@echo "You must have root privileges to install the driver"
+ #	@echo -ne "\033[1;37m"
+-endif
++#endif
+ 
+ dist:
+ 	@mkdir $(tmpDIR)
+diff -urN atmelwlandriver/src/apps/cmd_line/Makefile atmelwlandriver-Makefiles/src/apps/cmd_line/Makefile
+--- atmelwlandriver/src/apps/cmd_line/Makefile	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-Makefiles/src/apps/cmd_line/Makefile	2003-12-20 22:10:15.000000000 +0100
+@@ -5,11 +5,11 @@
+ 	WPA_FLAG:=
+ endif
+ OBJs=../../../objs
+-FLAGS1:=$(WPA_FLAG) -DATMEL -O2 -g
++FLAGS1:=$(WPA_FLAG) -DATMEL $(OPT) -g
+ FLAGS2:=-lncurses
+ FLAGS3:=-DLOW_RES
+ CC:=gcc
+ 
+ all:
+-	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
++	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+ 	@install -m 755 lvnet $(OBJs)/
+diff -urN atmelwlandriver/src/apps/winter/Makefile.rules atmelwlandriver-Makefiles/src/apps/winter/Makefile.rules
+--- atmelwlandriver/src/apps/winter/Makefile.rules	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-Makefiles/src/apps/winter/Makefile.rules	2003-12-20 22:09:33.000000000 +0100
+@@ -5,9 +5,10 @@
+ 
+ all: postmake
+ 
+-CC:=$(shell wx-config --cxx)
+-CFLAGS:=$(shell wx-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
+-CFLAGS1:=$(shell wx-config --libs)
++CC:=gcc
++CFLAGS:=$(shell wxgtk-2.4-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(OPT) $(ARCH_SPECIFIC_CFLAGS)
++CFLAGS1:=$(shell wxgtk-2.4-config --libs)
++
+ 
+ VPATH:=$(INC_DIR) $(SRC_DIR) $(RSRC_DIR)
+ 
+@@ -20,7 +21,7 @@
+ wxconfig:
+ 	@config_exists=no;\
+ 	for path_dir in `echo $(PATH) | tr : ' '`; do\
+-	  if test -f $$path_dir/wx-config; then\
++	  if test -f $$path_dir/wxgtk-2.4-config; then\
+ 	    config_exists=yes;\
+ 	  fi\
+ 	done;\
+diff -urN atmelwlandriver/src/Pcmcia_Pci/Makefile atmelwlandriver-Makefiles/src/Pcmcia_Pci/Makefile
+--- atmelwlandriver/src/Pcmcia_Pci/Makefile	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-Makefiles/src/Pcmcia_Pci/Makefile	2003-12-20 21:59:36.000000000 +0100
+@@ -7,13 +7,13 @@
+ 
+ VR:=$(shell uname -r)
+ ID:=$(shell id -u)
+-ifneq ($(VR),$(UNAME))
+-this:
++#ifneq ($(VR),$(UNAME))
++#this:
+ #	@echo -ne "\\033[1;31m"
+-	@echo -ne "Running kernel doesn't match with the source"
++#	@echo -ne "Running kernel doesn't match with the source"
+ #	@echo -ne "\\033[0;39m"
+-	@echo
+-endif
++#	@echo
++#endif
+ 
+ # Add extra compilation flags if under version 2.5 or higher
+ NEWKERNFLAGS := -D__KERNEL__ -nostdinc -iwithprefix include -DMODULE -DKBUILD_BASENAME=fastvnet_cs 
+@@ -26,7 +26,8 @@
+ DEFS := -pipe -O2 -fomit-frame-pointer -fno-strict-aliasing
+ 
+ CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
+-CFLAGS := -DLINUX_OS -D__KERNEL__ $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
++#CFLAGS := -DLINUX_OS -D__KERNEL__ $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
++CFLAGS := $(KCFLAGS) -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
+ PCMCIAADDONFLAGS := -I$(PCMCIA_SRC)/include
+ srcs := card.c command.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
+ pcisrcs := $(patsubst fastvnet_cs.c, fastvnet_cs.c ,$(srcs))
+diff -urN atmelwlandriver/src/usb/Makefile atmelwlandriver-Makefiles/src/usb/Makefile
+--- atmelwlandriver/src/usb/Makefile	2003-12-04 17:20:24.000000000 +0100
++++ atmelwlandriver-Makefiles/src/usb/Makefile	2003-12-20 22:00:57.000000000 +0100
+@@ -7,7 +7,7 @@
+ USB_DES := $(MODULES_DES)/kernel/drivers/net
+ CC=gcc
+ CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
+-CFLAGS :=-D__KERNEL__ -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb -Wall $(CFLAGS_y)
++CFLAGS := $(KCFLAGS) -I$(INC) -I$(INC)/usb  $(CFLAGS_y)
+ 
+ fws:=$(wildcard external*.h) $(wildcard internal*.h)
+ 

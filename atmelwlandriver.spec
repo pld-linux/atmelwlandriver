@@ -1,9 +1,9 @@
 # Conditional build:
-%bcond_without	dist_kernel	# Don't use a packaged kernel
-%bcond_without	kernel		# don't build kernel module(s)
-%bcond_without	smp		# Don't build the SMP module
-#
-%bcond_without	apps		# Don't build applications
+%bcond_without	dist_kernel	# allow non-distribution kernel
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP modules
+%bcond_without	userspace	# don't build userspace applications
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuxa do kart WLAN opartych na uk³adzie AT76C5XXx
@@ -21,16 +21,16 @@ Patch1:		atmelwlandriver-etc.patch
 URL:		http://atmelwlandriver.sourceforge.net
 BuildRequires:	rpmbuild(macros) >= 1.118
 BuildRequires:	%{kgcc_package}
-%if %{with dist_kernel}
-BuildRequires:	kernel-headers
-%requires_releq_kernel_up
+%if %{with kernel} && %{with dist_kernel}
+BuildRequires:	kernel-module-build
 %endif
-%if %{with apps}
+%if %{with userspace}
 BuildRequires:	ncurses-devel
 BuildRequires:	wxWindows-devel >= 2.4.0
 BuildRequires:	wxGTK-devel >= 2.4.0
 BuildRequires:	xforms-devel
 %endif
+%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires:	wireless-tools
 Requires(post,postun):	/sbin/depmod
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -59,7 +59,6 @@ Linux.
 %description -n kernel-smp-net-atmelwlandriver -l pl
 Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
 ATMELA AT76C5XXx.
-
 
 %package -n atmelwlandriver-tools
 Summary:	Tools for monitoring ATMEL Wireless Card
@@ -91,6 +90,8 @@ cp -f Makefile{.kernelv2.6,}
 
 %if %{with kernel}
 # kernel module(s)
+rm -rf built
+mkdir -p built/{nondist,smp,up}
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
     if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 	exit 1
@@ -100,24 +101,21 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
     ln -sf %{_kernelsrcdir}/config-$cfg .config
     ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
     touch include/config/MARKER
-
     %{__make} -C %{_kernelsrcdir} clean \
 	RCS_FIND_IGNORE="-name '*.ko' -o" \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
-
     %{__make} pcmcia buildonly=release \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
-
     %{__make} usb buildonly=release \
 	M=$PWD O=$PWD \
 	%{?with_verbose:V=1}
-
-#    mv $mod_name.ko $mod_name-$cfg.ko
+    mv -f objs/*/release/*.ko built/$cfg
 done
 %endif
 
+%if %{with userspace}
 #        make lvnet              - compile lvnet utility
 #        make winter             - compile winter utility - ( CAUTION : MUST have wxwindows installed )
 #        make install            - install modules and programs
@@ -126,6 +124,7 @@ done
 #%{__make} all \
 #	KCFLAGS="$KCFLAGS" \
 #	OPT="%{rpmcflags}" \
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -193,7 +192,7 @@ done
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
 %endif
 
-%if %{with apps}
+%if %{with userspace}
 %files -n atmelwlandriver-tools
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*

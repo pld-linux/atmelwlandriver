@@ -103,7 +103,7 @@ diff -uNr atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
 diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
 --- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-06-05 06:11:18.000000000 +0200
 +++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-07-19 12:16:29.080700072 +0200
-@@ -1,22 +1,7 @@
+@@ -1,22 +1,8 @@
 -KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
 -
 -ifeq '$(KERNEL_VERSION_NUMBER)' '4'
@@ -122,7 +122,7 @@ diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/ap
 -	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
 -	@install -m 755 lvnet $(OBJs)/
 -else
--INC = ../../includes
+ INC = ../../includes
  all:
 -	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
 +	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 

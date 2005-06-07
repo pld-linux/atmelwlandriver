@@ -1,0 +1,18 @@
+--- atmelwlandriver/src/usb/reset_device.c.orig	2004-11-10 10:40:50.000000000 +0100
++++ atmelwlandriver/src/usb/reset_device.c	2005-06-07 21:20:27.000000000 +0200
+@@ -1257,11 +1257,11 @@
+ 		struct usb_endpoint_descriptor	*d = &ifp->endpoint[i].desc;		
+ 		int b = d->bEndpointAddress & USB_ENDPOINT_NUMBER_MASK;
+ 		if (usb_endpoint_out(d->bEndpointAddress)) {
+-			if (d->wMaxPacketSize > dev->epmaxpacketout[b])
+-				dev->epmaxpacketout[b] = d->wMaxPacketSize;
++			if (d->wMaxPacketSize > dev->ep_out[b]->desc.wMaxPacketSize)
++				dev->ep_out[b]->desc.wMaxPacketSize = d->wMaxPacketSize;
+ 		} else {
+-			if (d->wMaxPacketSize > dev->epmaxpacketin[b])
+-				dev->epmaxpacketin[b] = d->wMaxPacketSize;
++			if (d->wMaxPacketSize > dev->ep_in[b]->desc.wMaxPacketSize)
++				dev->ep_in[b]->desc.wMaxPacketSize = d->wMaxPacketSize;
+ 		}
+ 	}
+ 			     

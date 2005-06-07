@@ -1,0 +1,33 @@
+--- atmelwlandriver/src/Pcmcia_Pci/fastvnet_cs.c.orig	2004-11-10 10:40:50.000000000 +0100
++++ atmelwlandriver/src/Pcmcia_Pci/fastvnet_cs.c	2005-06-07 20:51:32.000000000 +0200
+@@ -1894,7 +1894,7 @@
+   u64* pTime = (u64*) tCurrentTime; 
+   struct timeval timev;
+   do_gettimeofday(&timev);
+-  (u64) (*pTime) = timev.tv_sec * 10000000;
++  *pTime = timev.tv_sec * 10000000;
+ };
+ 
+ int atmel_assoc_info_event (struct net_device *dev, PVNet_ADAPTER Adapter)
+--- atmelwlandriver/src/usb/rx.c.orig	2004-11-10 10:40:50.000000000 +0100
++++ atmelwlandriver/src/usb/rx.c	2005-06-07 21:15:27.000000000 +0200
+@@ -746,7 +746,7 @@
+ 			    Adapter->RxInBuff.WirelessPacket +
+ 			    MGMT_FRAME_BODY_OFFSET;
+ 
+-			(UCHAR) Adapter->ErrorCode =
++			Adapter->ErrorCode =
+ 			    (UCHAR) *
+ 			    (PUSHORT) &
+ 			    AssociationRspnsFrame
+--- atmelwlandriver/src/usb/vnetusba.c.orig	2004-11-10 10:40:50.000000000 +0100
++++ atmelwlandriver/src/usb/vnetusba.c	2005-06-07 21:16:52.000000000 +0200
+@@ -847,7 +847,7 @@
+   u64* pTime = (u64*) tCurrentTime; 
+   struct timeval timev;
+   do_gettimeofday(&timev);
+-  (u64) (*pTime) = timev.tv_sec * 10000000;
++  *pTime = timev.tv_sec * 10000000;
+ };
+ 
+ int atmel_assoc_info_event (PVNet_ADAPTER Adapter)

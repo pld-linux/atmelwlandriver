@@ -23,14 +23,18 @@ Source0:	http://dl.sourceforge.net/atmelwlandriver/%{name}-%{version}.tar.bz2
 Source1:	%{name}-vnetrc
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-etc.patch
+Patch2:		%{name}-usb-api.patch
+Patch3:		%{name}-gcc4.patch
+Patch4:		%{name}-winter-makefile.patch
 #Patch2:		%{name}-fpmath.patch
 #Patch3:		%{name}-delay.patch
 #Patch4:		%{name}-usb_defctrl.patch
-Patch5:		%{name}-winter-makefile.patch
 URL:		http://atmelwlandriver.sourceforge.net/
 %if %{with kernel}
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
-BuildRequires:	kernel-source
+%if %{with dist_kernel}
+BuildRequires:	kernel-module-build >= 2.6.11
+BuildRequires:	kernel-source >= 2.6.11
+%endif
 BuildRequires:	rpmbuild(macros) >= 1.217
 %endif
 %if %{with userspace}
@@ -148,10 +152,9 @@ kart ATMELa.
 %setup -q -n atmelwlandriver
 %patch0 -p1
 %patch1 -p1
-#patch2 -p1
-#patch3 -p1
-#patch4 -p1
-%patch5 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 %build
 ln -sf Makefile.kernelv2.6 Makefile

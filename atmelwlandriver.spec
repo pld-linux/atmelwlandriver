@@ -5,8 +5,11 @@
 %bcond_without	smp		# don't build SMP modules
 %bcond_without	userspace	# don't build userspace applications
 %bcond_with	verbose		# verbose build (V=1)
-#
-#
+
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+
 Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
@@ -25,11 +28,10 @@ Patch1:		%{name}-etc.patch
 #Patch4:		%{name}-usb_defctrl.patch
 Patch5:		%{name}-winter-makefile.patch
 URL:		http://atmelwlandriver.sourceforge.net/
-BuildRequires:	rpmbuild(macros) >= 1.153
-BuildRequires:	%{kgcc_package}
-%if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel-module-build >= 2.6.7
+%if %{with kernel}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	kernel-source
+BuildRequires:	rpmbuild(macros) >= 1.217
 %endif
 %if %{with userspace}
 BuildRequires:	libusb-devel
@@ -38,10 +40,7 @@ BuildRequires:	ncurses-ext-devel
 BuildRequires:	wxWindows-devel >= 2.4.0
 BuildRequires:	wxGTK2-devel >= 2.4.0
 %endif
-%{?with_dist_kernel:%requires_releq_kernel_up}
 Requires:	wireless-tools
-Requires(post,postun):	/sbin/depmod
-Provides:	kernel-net(atmelwlandriver) = %{version}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -57,9 +56,11 @@ Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN na uk³adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
-Requires:	wireless-tools
 Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_up
+Requires(postun):	%releq_kernel_up
+%endif
 Provides:	kernel-net(atmelwlandriver) = %{version}
 
 %description -n kernel-net-atmelwlandriver
@@ -75,9 +76,11 @@ Summary:	Linux SMP driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa SMP do kart WLAN na uk³adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
-Requires:	wireless-tools
 Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_smp
+Requires(postun):	%releq_kernel_smp
+%endif
 Provides:	kernel-net(atmelwlandriver) = %{version}
 
 %description -n kernel-smp-net-atmelwlandriver
@@ -167,6 +170,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	touch include/config/MARKER
+
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
 		M=$PWD O=$PWD \
@@ -179,6 +183,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		KERNEL_VERSION=%{__kernel_ver} \
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
+
 	mv -f objs/*/release/*.ko built/$cfg
 done
 %endif

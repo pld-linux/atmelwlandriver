@@ -19,7 +19,7 @@ Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://dl.sourceforge.net/atmelwlandriver/%{name}-%{version}.tar.bz2
-# Source0-md5:	288882c65cc13fbe48d5c5ed69aba1a8
+# Source0-md5:	6cb3671091c7ccaa646222c50ee242c9
 Source1:	%{name}-vnetrc
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-etc.patch

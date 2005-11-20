@@ -1,10 +1,9 @@
-diff -urN atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kernelv2.6
---- atmelwlandriver.orig/Makefile.kernelv2.6	2004-12-05 14:16:10.000000000 +0100
-+++ atmelwlandriver/Makefile.kernelv2.6	2004-12-05 14:25:12.000000000 +0100
+--- atmelwlandriver/Makefile.kernelv2.6.orig	2005-11-20 19:57:50.225388500 +0100
++++ atmelwlandriver/Makefile.kernelv2.6	2005-11-20 19:57:51.957496750 +0100
 @@ -5,15 +5,13 @@
  SCRIPTSDIR=$(TOPDIR)/scripts
  INC=$(TOPDIR)/src/includes
- VERSION=3.4.1.0
+ VERSION=3.4.1.1
 -MINOR_NUMBER=$(shell uname -r | cut -d . -f 3 | cut -d - -f 1)
  ID:=$(shell id -u)
  tmpDIR:=/tmp/atm$(shell date +%S.%s)
@@ -18,7 +17,7 @@ diff -urN atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
  PCMCIA_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/pcmcia
  PCI_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/net
  USB_DES = $(DESTDIR)/lib/modules/$(KERNEL_VERSION)/kernel/drivers/usb
-@@ -101,34 +99,15 @@
+@@ -104,34 +102,15 @@
  $(all_targets): %:
  	@echo Building $@
  	@if [ ! -d $(OBJDIR)/$@ ]; then echo Bootstraping target $@; mkdir $(OBJDIR)/$@; fi 
@@ -54,184 +53,3 @@ diff -urN atmelwlandriver.orig/Makefile.kernelv2.6 atmelwlandriver/Makefile.kern
  		(cd $(OBJDIR)/$@/release; make) ; \
  	fi
  
-diff -urN atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
---- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2004-12-05 14:16:10.000000000 +0100
-+++ atmelwlandriver/src/apps/cmd_line/Makefile	2004-12-05 14:56:25.000000000 +0100
-@@ -1,22 +1,9 @@
--KERNEL_VERSION_NUMBER=$(shell uname -r | cut -d . -f 2)
--
--ifeq '$(KERNEL_VERSION_NUMBER)' '4'
--include $(TOPDIR)/.config
--endif
- 
- OBJs=../../../objs
--FLAGS1:=-Wall -DATMEL_WLAN -DATMEL -O2 -g
-+FLAGS1 :=-Wall -DATMEL_WLAN -DATMEL $(OPT)
- FLAGS2:=-lncurses
--FLAGS3:=-DLOW_RES
--CC:=gcc
- 
--ifeq '$(KERNEL_VERSION_NUMBER)' '4'
--all:
--	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
--	@install -m 755 lvnet $(OBJs)/
--else
- INC = ../../includes
- all:
--	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
-+	$(CC) $(FLAGS1) -I$(INC) -I/usr/include/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
- 	@install -m 755 lvnet $(OBJs)/
--endif
-diff -urN atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
---- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2004-12-05 14:16:10.000000000 +0100
-+++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2004-12-05 15:41:43.000000000 +0100
-@@ -3,11 +3,11 @@
- #########################################
- 
- 
--CC:=$(shell wx-config --cxx)
-+CC:=$(shell wxgtk2-2.4-config --cxx)
- CCC:=gcc
--CFLAGS:=$(shell wx-config --cxxflags) 
--CFLAGS1:=$(shell wx-config --libs)
--CCFLAGS:= -O2 -Wall -Wstrict-prototypes
-+CFLAGS:=$(shell wxgtk2-2.4-config --cxxflags) 
-+CFLAGS1:=$(shell wxgtk2-2.4-config --libs)
-+CCFLAGS:= $(OPT)
- OUTDIR:="/usr/local/bin"
- 
- 
-@@ -34,7 +34,7 @@
- wxconfig:
- 	@config_exists=no;\
- 	for path_dir in `echo $(PATH) | tr : ' '`; do\
--	  if test -f $$path_dir/wx-config; then\
-+	  if test -f $$path_dir/wxgtk2-2.4-config; then\
- 	    config_exists=yes;\
- 	  fi\
- 	done;\
-diff -urN atmelwlandriver.orig/src/apps/fw-upgrade/Makefile~ atmelwlandriver/src/apps/fw-upgrade/Makefile~
---- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile~	1970-01-01 01:00:00.000000000 +0100
-+++ atmelwlandriver/src/apps/fw-upgrade/Makefile~	2004-12-05 15:03:14.000000000 +0100
-@@ -0,0 +1,75 @@
-+#########################################
-+# Makefile of Fucd			#
-+#########################################
-+
-+
-+CC:=$(shell wxgtk2-2.4-config -cxx)
-+CCC:=gcc
-+CFLAGS:=$(shell wxgtk2-2.4-config --cxxflags) 
-+CFLAGS1:=$(shell wxgtk2-2.4-config --libs)
-+CCFLAGS:= $(OPT)
-+OUTDIR:="/usr/local/bin"
-+
-+
-+# All object files
-+COBJS:= atmelmain.o dfu.o
-+OBJS:= FucdApp.o FucdLayer.o dfu.o atmel.o
-+
-+usage:
-+	@echo -e "make clean\tRemove object files and executables"
-+	@echo -e "make fucd\tBuild X upgrade utility"
-+	@echo -e "make atmelup\tBuild command line upgrade utility"
-+	@echo -e "make all\tBuild both utilities"
-+
-+all: fucd atmelup
-+
-+fucd: wxconfig $(OBJS: .o=.c)
-+	@echo -e "Building fucd wxWidgets application..."
-+	$(CC) -o fucd $(OBJS) $(CFLAGS1) -lusb 
-+
-+atmelup: $(COBJS)
-+	@echo -e "Building atmelup command-line tool..."
-+	$(CCC) $(CCFLAGS) $(COBJS) -lusb -o $@
-+
-+wxconfig:
-+	@config_exists=no;\
-+	for path_dir in `echo $(PATH) | tr : ' '`; do\
-+	  if test -f $$path_dir/wxgtk2-2.4-config; then\
-+	    config_exists=yes;\
-+	  fi\
-+	done;\
-+	if test $$config_exists = 'no'; then\
-+	  echo 'It seems that the wxWindows library is not installed.';\
-+	  echo 'wx-config, the script providing information about wxWindows';\
-+	  echo 'installation, is missing. Please, refer to the README.linux';\
-+	  echo 'or visit www.wxwindows.org for further information.';\
-+	  echo 'We are sorry about the inconvenience.';\
-+	  exit -1;\
-+	fi
-+
-+FucdApp.o: FucdApp.cpp FucdApp.h
-+	$(CC) $(CFLAGS) -c $<
-+
-+FucdLayer.o: FucdLayer.cpp FucdLayer.h 
-+	$(CC) $(CFLAGS) -c $<
-+
-+atmel.o: atmel.c 
-+	$(CCC) $(CCFLAGS) -c $< 
-+
-+dfu.o: dfu.c dfu.h
-+	$(CCC) $(CCFLAGS) -c $<
-+
-+atmelmain.o: atmel.c	
-+	$(CCC) $(CCFLAGS) -DCONSOLE_APP -c $< -o $@
-+
-+clean:
-+	@echo -e "Removing all objects and executables..."
-+	@find . -name '*.o' | xargs rm -f *.o
-+	@rm -f fucd atmelup
-+
-+
-+install:
-+	@echo -e "Installing fucd to $(OUTDIR)"
-+	@if [ -e fucd ]; then install -m 755 fucd $(OUTDIR) ; fi
-+	@echo -e "Installing atmelup to $(OUTDIR)"
-+	@if [ -e atmelup ]; then install -m 755 atmelup $(OUTDIR) ; fi
-diff -urN atmelwlandriver.orig/src/Pcmcia_Pci/Makefile atmelwlandriver/src/Pcmcia_Pci/Makefile
---- atmelwlandriver.orig/src/Pcmcia_Pci/Makefile	2004-12-05 14:16:10.000000000 +0100
-+++ atmelwlandriver/src/Pcmcia_Pci/Makefile	2004-12-05 14:27:35.000000000 +0100
-@@ -5,22 +5,7 @@
- include .lastbuild
- endif
- 
--ARCH=$(shell uname -m)
--VR:=$(shell uname -r)
--ID:=$(shell id -u)
--ifneq ($(VR),$(UNAME))
--this:
--#	@echo -ne "\\033[1;31m"
--	@echo -ne "Running kernel doesn't match with the source"
--#	@echo -ne "\\033[0;39m"
--	@echo
--endif
--
--CC:=gcc
--CDEBUG:= -DPCMCIA_DEBUG=1
--DEFS :=  -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) 
--CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
--CFLAGS := -DLINUX_OS -D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
-+CFLAGS += -I$(INC) -I$(INC)/pcmcia $(CFLAGS_y)
- PCMCIAADDONFLAGS := -I$(PCMCIA_SRC)/include
- srcs := card.c command.c common.c fastvnet_cs.c interrupt.c mgmt.c rx.c tx.c vnet.c vnetlinux.c 
- pcisrcs := $(patsubst fastvnet_cs.c, fastvnet_cs.c ,$(srcs))
-diff -urN atmelwlandriver.orig/src/usb/Makefile atmelwlandriver/src/usb/Makefile
---- atmelwlandriver.orig/src/usb/Makefile	2004-12-05 14:16:10.000000000 +0100
-+++ atmelwlandriver/src/usb/Makefile	2004-12-05 14:29:51.000000000 +0100
-@@ -1,14 +1,9 @@
- include .lastbuild
- include $(TOPDIR)/.config
--ARCH=$(shell uname -m)
- MODULE := usbvnet.o
--CDEBUG := -DUSBDBG
--DEFS := -fno-strict-aliasing -fno-common -pipe -mpreferred-stack-boundary=2 -march=$(ARCH) 
- #conflicted with gcc's < 2.96:	-fno-optimize-sibling-calls 
- USB_DES := $(MODULES_DES)/kernel/drivers/net
--CC=gcc
--CFLAGS_$(CONFIG_MODVERSIONS):= -DMODULE -DMODVERSIONS -include $(KERNEL_SRC)/include/linux/modversions.h
--CFLAGS :=-D__KERNEL__ -Wall -Wstrict-prototypes -Wno-trigraphs -O2 $(DEFS) -I$(KERNEL_SRC)/include -I$(INC) -I$(INC)/usb 
-+CFLAGS += -I$(KERNEL_SRC)/drivers/usr/core -I$(INC) -I$(INC)/usb
- 
- $(CFLAGS_y)
- # Add extra compilation flags if under version 2.5 or higher

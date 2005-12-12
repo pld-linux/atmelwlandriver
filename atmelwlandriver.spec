@@ -41,8 +41,8 @@ BuildRequires:	rpmbuild(macros) >= 1.217
 BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
-BuildRequires:	wxWindows-devel >= 2.4.0
 BuildRequires:	wxGTK2-devel >= 2.4.0
+BuildRequires:	wxWindows-devel >= 2.4.0
 %endif
 Requires:	wireless-tools
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -149,7 +149,7 @@ Narzêdzie do aktualizacji wewnêtrznego oprogramowania bezprzewodowych
 kart ATMELa.
 
 %prep
-%setup -q -n atmelwlandriver
+%setup -q -n %{name}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -200,7 +200,7 @@ done
 	OPT="%{rpmcflags} %{rpmldflags}"
 
 %{__make} -C src/apps/fw-upgrade atmelup \
-	CCC=%{__cc} \
+	CCC="%{__cc}" \
 	CCFLAGS="%{rpmcflags}"
 
 %{__make} -C src/apps/fw-upgrade fucd \
@@ -279,8 +279,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-net-atmelwlandriver
 %defattr(644,root,root,755)
 %doc CHANGES README
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pcmcia/atmel.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vnetrc
 %attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/*.ko*
@@ -289,8 +289,8 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-smp-net-atmelwlandriver
 %defattr(644,root,root,755)
 %doc CHANGES README
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/pcmcia/atmel.conf
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/vnetrc
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/pcmcia/atmel.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vnetrc
 %attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/*.ko*

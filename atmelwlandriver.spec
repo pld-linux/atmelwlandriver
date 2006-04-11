@@ -45,7 +45,6 @@ BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
 BuildRequires:	wxGTK2-%{?with_unicode:unicode-}devel >= 2.6.0
-BuildRequires:	wxWidgets-%{?with_unicode:unicode-}devel >= 2.6.0
 %endif
 Requires:	wireless-tools
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)

@@ -1,5 +1,6 @@
---- atmelwlandriver/src/apps/winter/Makefile.rules.orig	2004-08-03 21:44:43.000000000 +0200
-+++ atmelwlandriver/src/apps/winter/Makefile.rules	2004-08-03 21:54:48.000000000 +0200
+diff -uNr atmelwlandriver.orig/src/apps/winter/Makefile.rules atmelwlandriver/src/apps/winter/Makefile.rules
+--- atmelwlandriver.orig/src/apps/winter/Makefile.rules	2005-07-22 09:37:22.000000000 +0200
++++ atmelwlandriver/src/apps/winter/Makefile.rules	2006-04-11 20:05:40.000000000 +0200
 @@ -5,9 +5,9 @@
  
  all: postmake
@@ -7,18 +8,25 @@
 -CC:=$(shell wx-config --cxx)
 -CFLAGS:=$(shell wx-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
 -CFLAGS1:=$(shell wx-config --libs)
-+CC:=$(shell wxgtk2-2.4-config --cxx)
-+CFLAGS:=$(OPT) $(shell wxgtk2-2.4-config --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
-+CFLAGS1:=$(shell wxgtk2-2.4-config --libs)
++CC:=$(shell $(WXCONFIG) --cxx)
++CFLAGS:=$(shell $(WXCONFIG) --cxxflags) -I$(INC_DIR) -I$(RSRC_DIR) $(ARCH_SPECIFIC_CFLAGS)
++CFLAGS1:=$(shell $(WXCONFIG) --libs)
  
  VPATH:=$(INC_DIR) $(SRC_DIR) $(RSRC_DIR)
  
-@@ -20,7 +20,7 @@
+@@ -20,13 +20,13 @@
  wxconfig:
  	@config_exists=no;\
  	for path_dir in `echo $(PATH) | tr : ' '`; do\
 -	  if test -f $$path_dir/wx-config; then\
-+	  if test -f $$path_dir/wxgtk2-2.4-config; then\
++	  if test -f $$path_dir/$(WXCONFIG); then\
  	    config_exists=yes;\
  	  fi\
  	done;\
+ 	if test $$config_exists = 'no'; then\
+ 	  echo 'It seems that the wxWindows library is not installed.';\
+-	  echo 'wx-config, the script providing information about wxWindows';\
++	  echo '$(WXCONFIG), the script providing information about wxWindows';\
+ 	  echo 'installation, is missing. Please, refer to the README.linux';\
+ 	  echo 'or visit www.wxwindows.org for further information.';\
+ 	  echo 'We are sorry about the inconvenience.';\

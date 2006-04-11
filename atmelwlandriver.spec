@@ -3,6 +3,7 @@
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	smp		# don't build SMP modules
+%bcond_with	unicode		# use wx-gtk2-unicode-config instead of ansi
 %bcond_without	userspace	# don't build userspace applications
 %bcond_with	verbose		# verbose build (V=1)
 
@@ -14,7 +15,7 @@ Summary:	Linux driver for WLAN card based on AT76C5XXx
 Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.4.1.1
-%define		_rel	0.1
+%define		_rel	0.9
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	GPL v2
 Group:		Base/Kernel
@@ -26,6 +27,8 @@ Patch1:		%{name}-etc.patch
 Patch2:		%{name}-usb-api.patch
 Patch3:		%{name}-gcc4.patch
 Patch4:		%{name}-winter-makefile.patch
+Patch5:		%{name}-fwupgrade.patch
+Patch6:		%{name}-cmdline.patch
 #Patch2:		%{name}-fpmath.patch
 #Patch3:		%{name}-delay.patch
 #Patch4:		%{name}-usb_defctrl.patch
@@ -41,8 +44,12 @@ BuildRequires:	rpmbuild(macros) >= 1.217
 BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncurses-ext-devel
-BuildRequires:	wxGTK2-devel >= 2.4.0
-BuildRequires:	wxWindows-devel >= 2.4.0
+BuildRequires:	wxGTK2-devel >= 2.6.0
+%if %{with unicode}
+BuildRequires:	wxWidgets-unicode-devel >= 2.6.0
+%else
+BuildRequires:	wxWidgets-devel >= 2.6.0
+%endif
 %endif
 Requires:	wireless-tools
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -155,6 +162,8 @@ kart ATMELa.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
 ln -sf Makefile.kernelv2.6 Makefile
@@ -194,17 +203,21 @@ done
 
 %if %{with userspace}
 %{__make} winter \
-	OPT="%{rpmcflags}"
+	OPT="%{rpmcflags}" \
+	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
 
 %{__make} lvnet \
-	OPT="%{rpmcflags} %{rpmldflags}"
+	OPT="%{rpmcflags} %{rpmldflags}" \
+	INCDIR=%{_includedir}
 
 %{__make} -C src/apps/fw-upgrade atmelup \
 	CCC="%{__cc}" \
-	CCFLAGS="%{rpmcflags}"
+	CCFLAGS="%{rpmcflags}" \
+	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
 
 %{__make} -C src/apps/fw-upgrade fucd \
-	OPT="%{rpmcflags}"
+	OPT="%{rpmcflags}" \
+	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
 %endif
 
 %install

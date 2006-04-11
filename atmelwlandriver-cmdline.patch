@@ -1,0 +1,17 @@
+diff -uNr atmelwlandriver.orig/src/apps/cmd_line/Makefile atmelwlandriver/src/apps/cmd_line/Makefile
+--- atmelwlandriver.orig/src/apps/cmd_line/Makefile	2005-07-22 09:37:22.000000000 +0200
++++ atmelwlandriver/src/apps/cmd_line/Makefile	2006-04-11 20:38:26.000000000 +0200
+@@ -12,11 +12,11 @@
+ 
+ ifeq '$(KERNEL_VERSION_NUMBER)' '4'
+ all:
+-	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
++	$(CC) $(FLAGS1) -I$(INC) -I$(INCDIR)/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+ 	@install -m 755 lvnet $(OBJs)/
+ else
+ INC = ../../includes
+ all:
+-	$(CC) $(FLAGS1) -I$(INC) -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
++	$(CC) $(FLAGS1) -I$(INC) -I$(INCDIR)/ncurses -o lvnet $(FLAGS2) cofvnet.c sets.c survey.c 
+ 	@install -m 755 lvnet $(OBJs)/
+ endif

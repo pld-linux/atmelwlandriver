@@ -1,0 +1,83 @@
+diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.cpp atmelwlandriver/src/apps/fw-upgrade/FucdApp.cpp
+--- atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.cpp	2005-07-22 09:37:22.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/FucdApp.cpp	2006-04-11 21:29:38.000000000 +0200
+@@ -92,7 +92,7 @@
+ END_EVENT_TABLE()
+ 
+ 
+-void FucdFrame::OnRescan()
++void FucdFrame::OnRescan(wxCommandEvent &event)
+ {
+ 	wxChoice *devchoice = (wxChoice*)FindWindowById(ID_CH_DEVICES);
+ 	smf->FindDevices();
+@@ -109,7 +109,7 @@
+ }
+ 
+ 
+-void FucdFrame::OnUpgradeFW()
++void FucdFrame::OnUpgradeFW(wxCommandEvent &event)
+ {
+ 	wxString fw_ver;
+ 	gg_dload->SetValue(0);	// Initialize GG
+@@ -171,7 +171,7 @@
+        return;
+ }
+ 
+-void FucdFrame::OnBtFile()
++void FucdFrame::OnBtFile(wxCommandEvent &event)
+ {
+         wxString filename, fullpath;
+ 	wxFileDialog fwfd(this, _("Choose a firmware image"), wxT("../"), wxT(""), 
+diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.h atmelwlandriver/src/apps/fw-upgrade/FucdApp.h
+--- atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.h	2005-07-22 09:37:22.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/FucdApp.h	2006-04-11 21:28:30.000000000 +0200
+@@ -57,13 +57,13 @@
+ 
+     public:
+         FucdFrame(wxWindow* parent, wxWindowID id, const wxString &title);
+-        void OnUpgradeFW();
+-	void OnBtFile();
++        void OnUpgradeFW(wxCommandEvent &event);
++	void OnBtFile(wxCommandEvent &event);
+ 	void OnTimer(wxTimerEvent &event);
+ 	void OnClose(wxCloseEvent &event);
+ 	void OnBtClose(wxCommandEvent &event);
+ 	void OnSelectDevice(wxCommandEvent &event);
+-	void OnRescan();
++	void OnRescan(wxCommandEvent &event);
+ 	void OnIdle(wxIdleEvent &event);
+ 	
+ 	FucdLayer* GetLayer() { return smf; };
+diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
+--- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2005-07-22 09:37:22.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2006-04-11 20:41:06.000000000 +0200
+@@ -3,10 +3,10 @@
+ #########################################
+ 
+ 
+-CC:=$(shell wx-config --cxx)
++CC:=$(shell $(WXCONFIG) --cxx)
+ CCC:=gcc
+-CFLAGS:=$(shell wx-config --cxxflags) 
+-CFLAGS1:=$(shell wx-config --libs)
++CFLAGS:=$(shell $(WXCONFIG) --cxxflags) 
++CFLAGS1:=$(shell $(WXCONFIG) --libs)
+ CCFLAGS:= -O2 -Wall -Wstrict-prototypes
+ OUTDIR:="/usr/local/bin"
+ 
+@@ -34,13 +34,13 @@
+ wxconfig:
+ 	@config_exists=no;\
+ 	for path_dir in `echo $(PATH) | tr : ' '`; do\
+-	  if test -f $$path_dir/wx-config; then\
++	  if test -f $$path_dir/$(WXCONFIG); then\
+ 	    config_exists=yes;\
+ 	  fi\
+ 	done;\
+ 	if test $$config_exists = 'no'; then\
+ 	  echo 'It seems that the wxWindows library is not installed.';\
+-	  echo 'wx-config, the script providing information about wxWindows';\
++	  echo '$(WXCONFIG), the script providing information about wxWindows';\
+ 	  echo 'installation, is missing. Please, refer to the README.linux';\
+ 	  echo 'or visit www.wxwindows.org for further information.';\
+ 	  echo 'We are sorry about the inconvenience.';\

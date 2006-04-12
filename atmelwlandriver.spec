@@ -160,9 +160,9 @@ kart ATMELa.
 %patch5 -p1
 %patch6 -p1
 
-%build
 ln -sf Makefile.kernelv2.6 Makefile
 
+%build
 %if %{with kernel}
 # kernel module(s)
 rm -rf built
@@ -252,32 +252,12 @@ install src/apps/fw-upgrade/fucd $RPM_BUILD_ROOT%{_sbindir}
 rm -rf $RPM_BUILD_ROOT
 
 %post -n kernel-net-atmelwlandriver
-#for i in /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/usbvnet* ; do
-#	cuted_i=$(basename $i|cut -d. -f1)
-#	if [ -f $i ]; then
-#		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
-#			echo "NOP" >/dev/null;
-#		else
-#			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
-#		fi
-#	fi
-#done
 %depmod %{_kernel_ver}
 
 %postun -n kernel-net-atmelwlandriver
 %depmod %{_kernel_ver}
 
 %post -n kernel-smp-net-atmelwlandriver
-#for i in /lib/modules/%{_kernel_ver}smp/kernel/drivers/usb/net/usbvnet* ; do
-#	cuted_i=$(basename $i|cut -d. -f1)
-#	if [ -f $i ]; then
-#		if ( grep $cuted_i /etc/modprobe.conf >/dev/null ); then
-#			echo "NOP" >/dev/null;
-#		else
-#			echo "#post-install $cuted_i /usr/sbin/fastvnet.sh">> /etc/modprobe.conf;
-#		fi
-#	fi
-#done
 %depmod %{_kernel_ver}smp
 
 %postun -n kernel-smp-net-atmelwlandriver

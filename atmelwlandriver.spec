@@ -199,7 +199,7 @@ done
 %if %{with userspace}
 %{__make} winter \
 	OPT="%{rpmcflags}" \
-	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
+	WXCONFIG="wx-gtk2-%{?with_unicode:unicode}%{!?with_unicode:ansi}-config"
 
 %{__make} lvnet \
 	OPT="%{rpmcflags} %{rpmldflags}" \
@@ -208,11 +208,11 @@ done
 %{__make} -C src/apps/fw-upgrade atmelup \
 	CCC="%{__cc}" \
 	CCFLAGS="%{rpmcflags}" \
-	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
+	WXCONFIG="wx-gtk2-%{?with_unicode:unicode}%{!?with_unicode:ansi}-config"
 
 %{__make} -C src/apps/fw-upgrade fucd \
 	OPT="%{rpmcflags}" \
-	WXCONFIG="wx-gtk2-%{?with_uncide:unicode}%{!?with_unicode:ansi}-config"
+	WXCONFIG="wx-gtk2-%{?with_unicode:unicode}%{!?with_unicode:ansi}-config"
 %endif
 
 %install

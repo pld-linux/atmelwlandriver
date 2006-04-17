@@ -172,24 +172,30 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		exit 1
 	fi
 	rm -rf include
-	install -d include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg .config
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-	touch include/config/MARKER
+	install -d o/include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+
+%if %{with dist_kernel}
+	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+%else
+	install -d o/include/config
+	touch o/include/config/MARKER
+	ln -sf %{_kernelsrcdir}/scripts o/scripts
+%endif
 
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD \
+		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} pcmcia buildonly=release \
 		KERNEL_VERSION=%{__kernel_ver} \
-		M=$PWD O=$PWD \
+		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} usb buildonly=release \
 		KERNEL_VERSION=%{__kernel_ver} \
-		M=$PWD O=$PWD \
+		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 
 	mv -f objs/*/release/*.ko built/$cfg
@@ -203,7 +209,7 @@ done
 
 %{__make} lvnet \
 	OPT="%{rpmcflags} %{rpmldflags}" \
-	INCDIR=%{_includedir}
+	INCDIR=%{_includedir} \
 
 %{__make} -C src/apps/fw-upgrade atmelup \
 	CCC="%{__cc}" \

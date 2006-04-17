@@ -16,3 +16,17 @@
  		}
  	}
  			     
+diff -Nur atmelwlandriver-orig/src/usb/vnetusba.c atmelwlandriver/src/usb/vnetusba.c
+--- atmelwlandriver-orig/src/usb/vnetusba.c	2006-04-11 12:38:57.516432000 +0200
++++ atmelwlandriver/src/usb/vnetusba.c	2006-04-17 14:53:11.006174500 +0200
+@@ -2254,6 +2254,10 @@
+ 		del_timer_sync(Adapter->CtrlTimer);
+ 	}
+ 
++#if (LINUX_VERSION_CODE > KERNEL_VERSION(2,6,13)) 
++#define URB_ASYNC_UNLINK 0
++#endif
++
+ #if (LINUX_VERSION_CODE < 0x020500)
+ 	Adapter->rx_urb->transfer_flags &= ~USB_ASYNC_UNLINK;
+ 	Adapter->tx_urb->transfer_flags &= ~USB_ASYNC_UNLINK;

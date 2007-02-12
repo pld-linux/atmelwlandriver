@@ -13,7 +13,7 @@
 
 %define		_rel	0.9
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl.UTF-8):   Sterownik dla Linuksa do kart WLAN opartych na układach AT76C5XXx
+Summary(pl.UTF-8):	Sterownik dla Linuksa do kart WLAN opartych na układach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.4.1.1
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -59,7 +59,7 @@ ATMELA AT76C5XXx.
 
 %package -n kernel-net-atmelwlandriver
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl.UTF-8):   Sterownik dla Linuksa do kart WLAN na układach AT76C5XXx
+Summary(pl.UTF-8):	Sterownik dla Linuksa do kart WLAN na układach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -79,7 +79,7 @@ ATMELA AT76C5XXx.
 
 %package -n kernel-smp-net-atmelwlandriver
 Summary:	Linux SMP driver for WLAN card based on AT76C5XXx
-Summary(pl.UTF-8):   Sterownik dla Linuksa SMP do kart WLAN na układach AT76C5XXx
+Summary(pl.UTF-8):	Sterownik dla Linuksa SMP do kart WLAN na układach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -99,7 +99,7 @@ układy ATMELA AT76C5XXx.
 
 %package tools
 Summary:	Command line tools for managing ATMEL Wireless Card
-Summary(pl.UTF-8):   Narzędzia linii poleceń do obsługi bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):	Narzędzia linii poleceń do obsługi bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
@@ -118,7 +118,7 @@ statystyczne urządzenia albo zmienić parametry jego pracy.
 
 %package winter
 Summary:	Graphical tool for monitoring ATMEL Wireless Cards
-Summary(pl.UTF-8):   Graficzne narzędzie do monitorowania bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):	Graficzne narzędzie do monitorowania bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
@@ -138,7 +138,7 @@ jednego urządzenia.
 
 %package fucd
 Summary:	Firmware upgrade tool for ATMEL Wireless Cards
-Summary(pl.UTF-8):   Narzędzie aktualizacji bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):	Narzędzie aktualizacji bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}

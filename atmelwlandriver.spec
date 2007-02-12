@@ -13,7 +13,7 @@
 
 %define		_rel	0.9
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuksa do kart WLAN opartych na uk³adach AT76C5XXx
+Summary(pl.UTF-8):   Sterownik dla Linuksa do kart WLAN opartych na ukÅ‚adach AT76C5XXx
 Name:		atmelwlandriver
 Version:	3.4.1.1
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -53,13 +53,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This is driver for WLAN card based on ATMEL AT76C5XXx devices for
 Linux.
 
-%description -l pl
-Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
+%description -l pl.UTF-8
+Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o ukÅ‚ady
 ATMELA AT76C5XXx.
 
 %package -n kernel-net-atmelwlandriver
 Summary:	Linux driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuksa do kart WLAN na uk³adach AT76C5XXx
+Summary(pl.UTF-8):   Sterownik dla Linuksa do kart WLAN na ukÅ‚adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -73,13 +73,13 @@ Provides:	kernel-net(atmelwlandriver) = %{version}
 This is driver for WLAN card based on ATMEL AT76C5XXx devices for
 Linux.
 
-%description -n kernel-net-atmelwlandriver -l pl
-Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o uk³ady
+%description -n kernel-net-atmelwlandriver -l pl.UTF-8
+Sterownik dla Linuksa do kart sieci bezprzewodowych opartych o ukÅ‚ady
 ATMELA AT76C5XXx.
 
 %package -n kernel-smp-net-atmelwlandriver
 Summary:	Linux SMP driver for WLAN card based on AT76C5XXx
-Summary(pl):	Sterownik dla Linuksa SMP do kart WLAN na uk³adach AT76C5XXx
+Summary(pl.UTF-8):   Sterownik dla Linuksa SMP do kart WLAN na ukÅ‚adach AT76C5XXx
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -93,13 +93,13 @@ Provides:	kernel-net(atmelwlandriver) = %{version}
 This is driver for WLAN card based on ATMEL AT76C5XXx devices for
 Linux SMP.
 
-%description -n kernel-smp-net-atmelwlandriver -l pl
+%description -n kernel-smp-net-atmelwlandriver -l pl.UTF-8
 Sterownik dla Linuksa SMP do kart sieci bezprzewodowych opartych o
-uk³ady ATMELA AT76C5XXx.
+ukÅ‚ady ATMELA AT76C5XXx.
 
 %package tools
 Summary:	Command line tools for managing ATMEL Wireless Card
-Summary(pl):	Narzêdzia linii poleceñ do obs³ugi bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):   NarzÄ™dzia linii poleceÅ„ do obsÅ‚ugi bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
@@ -110,15 +110,15 @@ module pcmf502*, the PCI module pcifvnet, or the USB module usbvnet*
 is loaded the lvnet application can monitor the device's statistics or
 change it's runtime parameters.
 
-%description tools -l pl
-Narzêdzia do obs³ugi dla adapterów kart sieci bezprzewodowych ATMEL.
-Kiedy modu³ PCMCIA pcmf502*, modu³ PCI pcifvnet, albo modu³ USB
-usbvnet* jest za³adowany to aplikacja lvnet mo¿e monitorowaæ dane
-statystyczne urz±dzenia albo zmieniæ parametry jego pracy.
+%description tools -l pl.UTF-8
+NarzÄ™dzia do obsÅ‚ugi dla adapterÃ³w kart sieci bezprzewodowych ATMEL.
+Kiedy moduÅ‚ PCMCIA pcmf502*, moduÅ‚ PCI pcifvnet, albo moduÅ‚ USB
+usbvnet* jest zaÅ‚adowany to aplikacja lvnet moÅ¼e monitorowaÄ‡ dane
+statystyczne urzÄ…dzenia albo zmieniÄ‡ parametry jego pracy.
 
 %package winter
 Summary:	Graphical tool for monitoring ATMEL Wireless Cards
-Summary(pl):	Graficzne narzêdzie do monitorowania bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):   Graficzne narzÄ™dzie do monitorowania bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
@@ -129,16 +129,16 @@ configure and manage ATMEL cards. It's functionality is similar to
 that of lvnet, extended by very useful features such as profiles,
 localization and support for more than one devices alternatively.
 
-%description winter -l pl
-Winter jest aplikacj± dla X, która dostarcza wizualne ¶rodowisko
-pozwalaj±ce na konfiguracjê kart ATMELa. Jego funkcjonalno¶æ jest
-podobna do tej jak± ma lvnet, dodatkowo rozszerzon± o bardzo przydatne
-funkcje takie jak: profile, lokalizacje i wsparcie dla wiêcej ni¿
-jednego urz±dzenia.
+%description winter -l pl.UTF-8
+Winter jest aplikacjÄ… dla X, ktÃ³ra dostarcza wizualne Å›rodowisko
+pozwalajÄ…ce na konfiguracjÄ™ kart ATMELa. Jego funkcjonalnoÅ›Ä‡ jest
+podobna do tej jakÄ… ma lvnet, dodatkowo rozszerzonÄ… o bardzo przydatne
+funkcje takie jak: profile, lokalizacje i wsparcie dla wiÄ™cej niÅ¼
+jednego urzÄ…dzenia.
 
 %package fucd
 Summary:	Firmware upgrade tool for ATMEL Wireless Cards
-Summary(pl):	Narzêdzie aktualizacji bezprzewodowych kart ATMEL
+Summary(pl.UTF-8):   NarzÄ™dzie aktualizacji bezprzewodowych kart ATMEL
 Release:	%{_rel}
 Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
@@ -146,8 +146,8 @@ Requires:	kernel-net(atmelwlandriver) = %{version}
 %description fucd
 Graphical firmware upgrade tool for ATMEL Wireless Cards.
 
-%description fucd -l pl
-Narzêdzie do aktualizacji wewnêtrznego oprogramowania bezprzewodowych
+%description fucd -l pl.UTF-8
+NarzÄ™dzie do aktualizacji wewnÄ™trznego oprogramowania bezprzewodowych
 kart ATMELa.
 
 %prep

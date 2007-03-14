@@ -2,6 +2,7 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
+%bcond_without	up		# don't build UP modules
 %bcond_without	smp		# don't build SMP modules
 %bcond_with	unicode		# use wx-gtk2-unicode-config instead of ansi
 %bcond_without	userspace	# don't build userspace applications
@@ -270,6 +271,7 @@ rm -rf $RPM_BUILD_ROOT
 %depmod %{_kernel_ver}smp
 
 %if %{with kernel}
+%if %{with up} || %{without dist_kernel}
 %files -n kernel-net-atmelwlandriver
 %defattr(644,root,root,755)
 %doc CHANGES README
@@ -278,6 +280,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/fastvnet.sh
 /lib/modules/%{_kernel_ver}/kernel/drivers/net/pcmcia/*.ko*
 /lib/modules/%{_kernel_ver}/kernel/drivers/usb/net/*.ko*
+%endif
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-net-atmelwlandriver

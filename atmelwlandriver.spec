@@ -125,7 +125,7 @@ Group:		Networking/Utilities
 Requires:	kernel-net(atmelwlandriver) = %{version}
 
 %description winter
-Winter is an X application, that provides a visual enviroment to
+Winter is an X application, that provides a visual environment to
 configure and manage ATMEL cards. It's functionality is similar to
 that of lvnet, extended by very useful features such as profiles,
 localization and support for more than one devices alternatively.

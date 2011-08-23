@@ -1,6 +1,5 @@
-diff -uNr atmelwlandriver.orig/src/apps/winter/Makefile.rules atmelwlandriver/src/apps/winter/Makefile.rules
---- atmelwlandriver.orig/src/apps/winter/Makefile.rules	2005-07-22 09:37:22.000000000 +0200
-+++ atmelwlandriver/src/apps/winter/Makefile.rules	2006-04-11 20:05:40.000000000 +0200
+--- atmelwlandriver/src/apps/winter/Makefile.rules	2006-04-11 20:05:40.000000000 +0200
++++ atmelwlandriver/src/apps/winter/Makefile.rules	2011-08-23 07:29:34.426583091 +0300
 @@ -5,9 +5,9 @@
  
  all: postmake
@@ -21,7 +20,8 @@ diff -uNr atmelwlandriver.orig/src/apps/winter/Makefile.rules atmelwlandriver/sr
 -	  if test -f $$path_dir/wx-config; then\
 +	  if test -f $$path_dir/$(WXCONFIG); then\
  	    config_exists=yes;\
- 	  fi\
+-	  fi\
++	  fi;\
  	done;\
  	if test $$config_exists = 'no'; then\
  	  echo 'It seems that the wxWindows library is not installed.';\

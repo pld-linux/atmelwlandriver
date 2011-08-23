@@ -1,4 +1,3 @@
-diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.cpp atmelwlandriver/src/apps/fw-upgrade/FucdApp.cpp
 --- atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.cpp	2005-07-22 09:37:22.000000000 +0200
 +++ atmelwlandriver/src/apps/fw-upgrade/FucdApp.cpp	2006-04-11 21:29:38.000000000 +0200
 @@ -92,7 +92,7 @@
@@ -28,7 +27,6 @@ diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.cpp atmelwlandriver/s
  {
          wxString filename, fullpath;
  	wxFileDialog fwfd(this, _("Choose a firmware image"), wxT("../"), wxT(""), 
-diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.h atmelwlandriver/src/apps/fw-upgrade/FucdApp.h
 --- atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.h	2005-07-22 09:37:22.000000000 +0200
 +++ atmelwlandriver/src/apps/fw-upgrade/FucdApp.h	2006-04-11 21:28:30.000000000 +0200
 @@ -57,13 +57,13 @@
@@ -48,9 +46,8 @@ diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/FucdApp.h atmelwlandriver/src
  	void OnIdle(wxIdleEvent &event);
  	
  	FucdLayer* GetLayer() { return smf; };
-diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/apps/fw-upgrade/Makefile
---- atmelwlandriver.orig/src/apps/fw-upgrade/Makefile	2005-07-22 09:37:22.000000000 +0200
-+++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2006-04-11 20:41:06.000000000 +0200
+--- atmelwlandriver/src/apps/fw-upgrade/Makefile	2006-04-11 20:41:06.000000000 +0200
++++ atmelwlandriver/src/apps/fw-upgrade/Makefile	2011-08-23 07:44:41.675357692 +0300
 @@ -3,10 +3,10 @@
  #########################################
  
@@ -72,7 +69,8 @@ diff -uNr atmelwlandriver.orig/src/apps/fw-upgrade/Makefile atmelwlandriver/src/
 -	  if test -f $$path_dir/wx-config; then\
 +	  if test -f $$path_dir/$(WXCONFIG); then\
  	    config_exists=yes;\
- 	  fi\
+-	  fi\
++	  fi;\
  	done;\
  	if test $$config_exists = 'no'; then\
  	  echo 'It seems that the wxWindows library is not installed.';\
